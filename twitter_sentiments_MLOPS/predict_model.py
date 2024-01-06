@@ -13,16 +13,16 @@ test_loader = DataLoader(test_dataset, batch_size=4, shuffle=False)
 
 embedding_dim = 768
 hidden_dim = 128
-output_dim = 4
 
 # Load the model
-model = SimpleNN(embedding_dim, hidden_dim, output_dim)
-#model.load_state_dict(torch.load('path_to_save_model/first_model_state_dict.pth'))
+model = SimpleNN(embedding_dim, hidden_dim)
+# model.load_state_dict(torch.load('path_to_save_model/first_model_state_dict.pth'))
 model.eval()  # Set the model to evaluation mode
 
 # Load tokenizer and model for embeddings
 tokenizer = AutoTokenizer.from_pretrained("cardiffnlp/twitter-roberta-base-sentiment-latest")
 embedding_model = AutoModel.from_pretrained("cardiffnlp/twitter-roberta-base-sentiment-latest")
+
 
 def preprocess_and_predict(tweet, tokenizer, embedding_model, classification_model):
     # Tokenize and prepare input
@@ -38,10 +38,11 @@ def preprocess_and_predict(tweet, tokenizer, embedding_model, classification_mod
     # Prediction
     with torch.no_grad():
         prediction = classification_model(embeddings)
-    
+
     # Convert prediction to label
     label = torch.argmax(prediction, dim=1).item()
     return label
+
 
 # Example tweet
 tweet = "i am so angry and mad, and very unhappy"
@@ -52,6 +53,7 @@ label_mapping = {0: "positive", 1: "negative", 2: "neutral", 3: "irrelevant"}
 predicted_category = label_mapping[label]
 
 print(f"The predicted category for the tweet is: {predicted_category}")
+
 
 ##### Real evaluation #####
 def evaluate_model(test_loader, tokenizer, embedding_model, classification_model):
@@ -77,9 +79,10 @@ def evaluate_model(test_loader, tokenizer, embedding_model, classification_model
     wandb.log({"test_accuracy": accuracy})
     return accuracy
 
+
 # Evaluate the model
 accuracy = evaluate_model(test_loader, tokenizer, embedding_model, model)
-#print(f"Accuracy on the test set: {accuracy}%")
+# print(f"Accuracy on the test set: {accuracy}%")
 
 ''' 
 def predict(

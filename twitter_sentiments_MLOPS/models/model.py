@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.optim as optim
 
 class SimpleNN(nn.Module):
-    def __init__(self, embedding_dim, hidden_dim, output_dim):
+    def __init__(self, embedding_dim, hidden_dim, output_dim = 4):
         super(SimpleNN, self).__init__()
         self.fc1 = nn.Linear(embedding_dim, hidden_dim)
         self.relu = nn.ReLU()

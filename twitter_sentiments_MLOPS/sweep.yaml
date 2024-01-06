@@ -1,4 +1,4 @@
-program: predict_model.py
+program: train_model.py
 project: twitter_sentiments_MLOPS
 method: grid  # Can be grid, random, or bayesian
 metric:
@@ -13,3 +13,5 @@ parameters:
     values: [5]
 
   # Add more parameters here if needed
+# wandb sweep path/to/sweep.yaml
+# wandb agent your_sweep_id
