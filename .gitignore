@@ -1,5 +1,9 @@
 docs/site/
 
+#data files
+data/raw/twitter_training.csv
+data/raw/twitter_test.csv
+
 # test cache
 manual_test/
 
