@@ -1,0 +1,17 @@
+program: train_model.py
+project: twitter_sentiments_MLOPS
+method: grid  # Can be grid, random, or bayesian
+metric:
+  name: loss
+  goal: minimize
+parameters:
+  learning_rate:
+    values: [0.01]
+  batch_size:
+    values: [16, 32]
+  num_epochs:
+    values: [5]
+
+  # Add more parameters here if needed
+# wandb sweep path/to/sweep.yaml
+# wandb agent your_sweep_id

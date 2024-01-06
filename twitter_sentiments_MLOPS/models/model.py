@@ -1,26 +1,20 @@
 import torch
+import torch.nn as nn
+import torch.optim as optim
 
-class MyNeuralNet(torch.nn.Module):
-    """ Basic neural network class. 
-    
-    Args:
-        in_features: number of input features
-        out_features: number of output features
-    
-    """
-    def __init__(self, in_features: int, out_features: int) -> None:
-        self.l1 = torch.nn.Linear(in_features, 500)
-        self.l2 = torch.nn.Linear(500, out_features)
-        self.r = torch.nn.ReLU()
-    
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        """Forward pass of the model.
-        
-        Args:
-            x: input tensor expected to be of shape [N,in_features]
+class SimpleNN(nn.Module):
+    def __init__(self, embedding_dim, hidden_dim, output_dim = 4):
+        super(SimpleNN, self).__init__()
+        self.fc1 = nn.Linear(embedding_dim, hidden_dim)
+        self.relu = nn.ReLU()
+        self.fc2 = nn.Linear(hidden_dim, output_dim)
+        self.softmax = nn.Softmax(dim=1)  #softmax for several classes
 
-        Returns:
-            Output tensor with shape [N,out_features]
+    def forward(self, x):
+        hidden = self.fc1(x)
+        relu = self.relu(hidden)
+        output = self.fc2(relu)
+        output = self.softmax(output)  
+        return output
 
-        """
-        return self.l2(self.r(self.l1(x)))
+
