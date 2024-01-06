@@ -1,7 +1,7 @@
 docs/site/
 
 #data files
-data/raw/
+#data/raw/
 
 # test cache
 manual_test/
