@@ -1,0 +1,8 @@
+experiment:
+  n_tweets_embed: 25000
+  seed: 123
+  excluded_char:
+  - '['
+  - ']'
+  - '?'
+  replace_nan_with: Nothing
