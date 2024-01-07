@@ -6,3 +6,5 @@ Pygments == 2.17.2
 transformers >= 4.11.3
 wandb >= 0.12.6
 hydra-core >= 1.1.0
+scikit-learn >= 1.0.1
+```
