@@ -16,6 +16,7 @@ from sklearn.preprocessing import OneHotEncoder
 import os
 import json
 
+
 logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger()
 wandb.init(project="day1_mlops", entity="twitter_sentiments_mlops")
@@ -72,9 +73,9 @@ def save_embeddings(df: pd.DataFrame, path: str, excluded_characters: List[str],
     cleaned_texts = clean_strings(texts, excluded_characters, none_replacement)
 
     # Assuming 'cleaned_texts' is your list of texts
-    batch_size = 10
+    batch_size = 6
     num_batches = (len(cleaned_texts) + batch_size - 1) // batch_size  # Compute the number of batches required
-
+    output_tensors = []
     # Process and log in batches
     for i in range(num_batches):
         # Calculate start and end indices of the current batch
@@ -86,16 +87,22 @@ def save_embeddings(df: pd.DataFrame, path: str, excluded_characters: List[str],
 
         # Tokenize and create inputs
         inputs = tokenizer(batch_texts, padding=True, truncation=True, return_tensors="pt")
-
+        
         # Generate embeddings
         with torch.no_grad():
             outputs = model(**inputs)
-    
+        
+        # Extract embeddings (e.g., pooled output)
+        embeddings = outputs.pooler_output
+        #flattened_embeddings = embeddings.transpose(0, 1).flatten(start_dim=0, end_dim=1)
+        output_tensors.append(embeddings)
         wandb.log({"Number of tweets embedded": end_idx+1})
-
-    # Extract embeddings (e.g., pooled output)
-    embeddings = outputs.pooler_output
-    torch.save(embeddings, path + "/text_embeddings.pt")
+    
+    extended_tensor = torch.tensor([])
+    for tensor in output_tensors:
+        extended_tensor = torch.cat((extended_tensor, tensor))
+    
+    torch.save(extended_tensor, path + "/text_embeddings.pt")
 
 def clean_strings(string_list: List[str], remove_chars: List[str], none_replacement: str) -> List[str]:
     """
@@ -133,10 +140,10 @@ def main(cfg):
     df = pd.read_csv(raw_data_path)
     df = df.head(k)  # k is an integer
     df.columns = ["id", "game", "sentiment label", "tweet"]
-    
+
     set_seed(seed)
-    #save_labels(df, processed_directory_path)
     save_embeddings(df, processed_directory_path, excluded_characters, none_replacement)
+    save_labels(df, processed_directory_path)
 
 
 if __name__ == "__main__":
