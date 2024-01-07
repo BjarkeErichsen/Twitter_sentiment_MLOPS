@@ -1,0 +1,5 @@
+outs:
+- md5: 39339214860f8bc977b9c276ade79aca
+  size: 31940
+  hash: md5
+  path: text_embeddings.pt

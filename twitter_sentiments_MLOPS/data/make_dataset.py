@@ -9,23 +9,50 @@ import logging
 from transformers import set_seed
 from typing import List, NoReturn
 from hydra.utils import to_absolute_path
+import pandas as pd
+import torch
+from typing import NoReturn
+from sklearn.preprocessing import OneHotEncoder
+import os
+import json
 
 logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger()
 wandb.init(project="day1_mlops", entity="twitter_sentiments_mlops")
 
-
 def save_labels(df: pd.DataFrame, path: str) -> NoReturn:
     """
-    Save the labels to a one-hot encoded torch tensor.
+    Save the labels to a one-hot encoded torch tensor and category mapping to a text file.
 
-    :param df: Dataframe containing the labels.
-    :param path: Path to save the labels.
+    :param df: DataFrame containing the labels.
+    :param path: Path to save the labels and category mapping.
     """
+    # Ensure the 'sentiment label' column is of type 'category'
     df["sentiment label"] = df["sentiment label"].astype("category")
-    category_encoded = df["sentiment label"].cat.codes
-    tensor = torch.tensor(category_encoded.values)
-    torch.save(tensor, path + "/labels.pt")
+
+    # Create a one-hot encoder
+    one_hot_encoder = OneHotEncoder(sparse=False)
+
+    # Fit and transform the labels to one-hot encoding
+    one_hot_labels = one_hot_encoder.fit_transform(df[["sentiment label"]])
+
+    # Convert to a PyTorch tensor
+    tensor = torch.tensor(one_hot_labels, dtype=torch.float32)
+
+    # Save the tensor
+    os.makedirs(os.path.dirname(path), exist_ok=True)  # Create directory if it doesn't exist
+    torch.save(tensor, os.path.join(path, "labels.pt"))
+
+    # Create the category mapping
+    category_mapping = {category: one_hot_encoder.transform([[category]]).tolist()[0]
+                        for category in df["sentiment label"].cat.categories}
+
+    # Save the category mapping to a text file
+    mapping_path = os.path.join(path, "category_mapping.txt")
+    with open(mapping_path, 'w') as file:
+        file.write(json.dumps(category_mapping, indent=4))
+
+    print("Category mapping saved to:", mapping_path)
 
 
 def save_embeddings(df: pd.DataFrame, path: str, excluded_characters: List[str], none_replacement="Nothing") -> NoReturn:
@@ -106,13 +133,13 @@ def main(cfg):
     df = pd.read_csv(raw_data_path)
     df = df.head(k)  # k is an integer
     df.columns = ["id", "game", "sentiment label", "tweet"]
-
+    
     set_seed(seed)
-    save_labels(df, processed_directory_path)
+    #save_labels(df, processed_directory_path)
     save_embeddings(df, processed_directory_path, excluded_characters, none_replacement)
 
 
 if __name__ == "__main__":
     main()
     wandb.finish()
-    
+
