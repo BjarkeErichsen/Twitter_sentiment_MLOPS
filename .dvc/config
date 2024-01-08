@@ -1,0 +1,6 @@
+[core]
+    remote = tsaremote
+['remote "myremote"']
+    url = ../gdrive1GYADdgFn4qVHT14DUHa9Jv-_Kz_QJ2bw:/1GYADdgFn4qVHT14DUHa9Jv-_Kz_QJ2bw
+['remote "tsaremote"']
+    url = gdrive://1GYADdgFn4qVHT14DUHa9Jv-_Kz_QJ2bw

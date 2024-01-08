@@ -1,0 +1,5 @@
+outs:
+- md5: 572151e90a6dfc8a0369164ead212b70
+  size: 164351
+  hash: md5
+  path: twitter_validation.csv
