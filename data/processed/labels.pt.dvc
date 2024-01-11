@@ -3,3 +3,7 @@ outs:
   size: 1195991
   hash: md5
   path: labels.pt
+  cloud:
+    remote_storage:
+      etag: 08c9b881e196d683031001
+      version_id: '1705005046324297'
