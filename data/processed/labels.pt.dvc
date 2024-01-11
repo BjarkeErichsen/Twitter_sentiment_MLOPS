@@ -1,5 +1,5 @@
 outs:
-- md5: 1b0b0f6400d28724eb8d6537e19854f3
-  size: 401111
+- md5: 639b3c4bb100e45763b178f5003c27c7
+  size: 1195991
   hash: md5
   path: labels.pt

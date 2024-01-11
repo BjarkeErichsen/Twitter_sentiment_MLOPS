@@ -19,7 +19,7 @@ import json
 
 logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger()
-wandb.init(project="day1_mlops", entity="twitter_sentiments_mlops")
+wandb.init(project="day2_mlops", entity="twitter_sentiments_mlops")
 
 def save_labels(df: pd.DataFrame, path: str) -> NoReturn:
     """
@@ -56,7 +56,7 @@ def save_labels(df: pd.DataFrame, path: str) -> NoReturn:
     print("Category mapping saved to:", mapping_path)
 
 
-def save_embeddings(df: pd.DataFrame, path: str, excluded_characters: List[str], none_replacement="Nothing") -> NoReturn:
+def save_embeddings(df: pd.DataFrame, path: str, excluded_characters: List[str], none_replacement="Nothing", batch_size=10) -> NoReturn:
     """
     Save the embedded tweets to a torch tensor using a pretrained model.
 
@@ -68,12 +68,13 @@ def save_embeddings(df: pd.DataFrame, path: str, excluded_characters: List[str],
     model_name = f"cardiffnlp/twitter-roberta-base-sentiment-latest"
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     model = AutoModel.from_pretrained(model_name)
-
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model.to(device)
+    print("device: ", device)
     texts = list(df["tweet"])
     cleaned_texts = clean_strings(texts, excluded_characters, none_replacement)
 
     # Assuming 'cleaned_texts' is your list of texts
-    batch_size = 6
     num_batches = (len(cleaned_texts) + batch_size - 1) // batch_size  # Compute the number of batches required
     output_tensors = []
     # Process and log in batches
@@ -86,16 +87,15 @@ def save_embeddings(df: pd.DataFrame, path: str, excluded_characters: List[str],
         batch_texts = cleaned_texts[start_idx:end_idx]
 
         # Tokenize and create inputs
-        inputs = tokenizer(batch_texts, padding=True, truncation=True, return_tensors="pt")
+        inputs = tokenizer(batch_texts, padding=True, truncation=True, return_tensors="pt").to(device)
         
         # Generate embeddings
         with torch.no_grad():
             outputs = model(**inputs)
-        
         # Extract embeddings (e.g., pooled output)
         embeddings = outputs.pooler_output
         #flattened_embeddings = embeddings.transpose(0, 1).flatten(start_dim=0, end_dim=1)
-        output_tensors.append(embeddings)
+        output_tensors.append(embeddings.to("cpu"))
         wandb.log({"Number of tweets embedded": end_idx+1})
     
     extended_tensor = torch.tensor([])
@@ -133,6 +133,7 @@ def main(cfg):
     none_replacement = hparams["replace_nan_with"]
     k = hparams["n_tweets_embed"]
     seed = hparams["seed"]
+    batch_size = hparams["batch_size"]
     excluded_characters =  hparams["excluded_char"]
     print("k ", k, " seed ", seed)
     processed_directory_path = to_absolute_path("data/processed")
@@ -142,7 +143,7 @@ def main(cfg):
     df.columns = ["id", "game", "sentiment label", "tweet"]
 
     set_seed(seed)
-    save_embeddings(df, processed_directory_path, excluded_characters, none_replacement)
+    save_embeddings(df, processed_directory_path, excluded_characters, none_replacement, batch_size)
     save_labels(df, processed_directory_path)
 
 
