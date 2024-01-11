@@ -11,7 +11,7 @@ concurrency:
 jobs:
   build:
 
-    runs-on: [ubuntu-latest] #windows-latest,mac-latest]
+    runs-on: [windows-latest] #windows-latest,mac-latest]
 
     steps:
     - name: Checkout
@@ -26,7 +26,6 @@ jobs:
         project_id: mlops-tsa
         service_account_key: ${{ secrets.GCP_SA_KEY }}
         export_default_credentials: true
-
     - uses: iterative/setup-dvc@v1 #get the data
     - name: get data
       run: |
