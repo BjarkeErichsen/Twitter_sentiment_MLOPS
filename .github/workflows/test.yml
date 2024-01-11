@@ -2,7 +2,7 @@ name: "Run tests"
 
 on:
   push: #pull_request
-    branches: [ master, main, dev, data]
+    branches: [ master, main, dev, data, Model_and_training]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-${{ github.head_ref }}
