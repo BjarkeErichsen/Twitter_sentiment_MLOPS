@@ -1,4 +1,5 @@
 program: twitter_sentiments_MLOPS/train_model.py
+project: twitter_sentiments_mlops
 method: grid
 metric:
   name: loss

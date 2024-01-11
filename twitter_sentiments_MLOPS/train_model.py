@@ -6,7 +6,7 @@ import torch.nn as nn
 from sklearn.model_selection import train_test_split
 from transformers import AutoTokenizer, AutoConfig, AutoModel
 from torch.profiler import profile, record_function, ProfilerActivity
-
+from twitter_sentiments_MLOPS.visualizations.visualize import log_confusion_matrix
 import torch
 import wandb
 
@@ -14,8 +14,8 @@ import wandb
 # from models import embedded_model
 #wandb.init(project="twitter_sentiment_MLOPS", reinit=True, config="twitter_sentiments_MLOPS/sweep.yaml")
 #wandb.init(project="training", entity="twitter_sentiments_mlops")
-#wandb.init(project="twitter_sentiments_mlops", entity="twitter_sentiments_mlops")
-wandb.init( entity="twitter_sentiments_mlops")
+wandb.init(project="twitter_sentiments_mlops", entity="twitter_sentiments_mlops")
+#wandb.init( entity="twitter_sentiments_mlops")
 
 # Configure Hyperparameters
 
@@ -141,12 +141,7 @@ print("Finished Training and Validation")
 #torch.save(model.state_dict(), "models/first_model_state_dict.pth")
 
 
-# Log the confusion matrix
-# Convert one-hot encoded labels to class indices
-all_labels = [label.index(1) for label in all_labels]
 
-# Ensure all_predictions is a list of integers
-all_predictions = [int(prediction) for prediction in all_predictions]
 
 
 
@@ -155,26 +150,4 @@ torch.save(model, 'models/first_model.pth') # saves the full model
 # Optional: Save the model's final state to wandb
 # wandb.save('models/first_model_state_dict.pth')
 
-
-import matplotlib.pyplot as plt
-import seaborn as sns
-from sklearn.metrics import confusion_matrix
-import numpy as np
-
-# Assuming all_labels and all_predictions are lists of integers
-cm = confusion_matrix(all_labels, all_predictions)
-class_names = ["positive", "negative", "neutral", "irrelevant"]
-
-# Plotting using seaborn for a more aesthetically pleasing matrix
-plt.figure(figsize=(10, 8))
-sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=class_names, yticklabels=class_names)
-plt.title('Confusion Matrix')
-plt.ylabel('True Label')
-plt.xlabel('Predicted Label')
-plt.tight_layout()
-
-# Save the plot as an image file
-plt.savefig("confusion_matrix.png")
-plt.close()
-
-wandb.log({"conf_matrix" : wandb.Image("confusion_matrix.png")})
+log_confusion_matrix(all_labels, all_predictions)
