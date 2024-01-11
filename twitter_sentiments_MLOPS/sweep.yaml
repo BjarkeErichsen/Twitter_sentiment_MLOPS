@@ -1,12 +1,11 @@
 program: twitter_sentiments_MLOPS/train_model.py
-project: training
 method: grid
 metric:
   name: loss
   goal: minimize
 parameters:
   learning_rate:
-    value: 0.01 # Add more values as needed
+    value: 0.01 # Add more values as needed project: twitter_sentiments_mlops
   batch_size:
     value: 16 # Add more values as needed
   num_epochs:

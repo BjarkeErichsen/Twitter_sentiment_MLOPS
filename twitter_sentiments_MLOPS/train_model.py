@@ -14,7 +14,8 @@ import wandb
 # from models import embedded_model
 #wandb.init(project="twitter_sentiment_MLOPS", reinit=True, config="twitter_sentiments_MLOPS/sweep.yaml")
 #wandb.init(project="training", entity="twitter_sentiments_mlops")
-wandb.init(project="twitter_sentiments_mlops", entity="twitter_sentiments_mlops")
+#wandb.init(project="twitter_sentiments_mlops", entity="twitter_sentiments_mlops")
+wandb.init( entity="twitter_sentiments_mlops")
 
 # Configure Hyperparameters
 
