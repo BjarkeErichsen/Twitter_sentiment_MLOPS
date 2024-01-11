@@ -3,5 +3,5 @@
 ['remote "gdrive_tsaremote"']
     url = gdrive://1GYADdgFn4qVHT14DUHa9Jv-_Kz_QJ2bw
 ['remote "remote_storage"']
-    url = gs://data_bucket_tsa
+    url = gs://bucket_processed_data
     version_aware = true
