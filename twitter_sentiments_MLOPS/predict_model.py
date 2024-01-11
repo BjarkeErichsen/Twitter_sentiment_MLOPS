@@ -4,19 +4,20 @@ from models.model import SimpleNN
 from torch.utils.data import DataLoader, TensorDataset
 import wandb
 
-wandb.init(project="twitter_sentiment_MLOPS", entity="avalentin37")
+#wandb.init(project="twitter_sentiment_MLOPS")
 
 ############ data load ###############
 # Assuming test_embeddings_tensor and test_labels_tensor are your test dataset tensors
-test_dataset = TensorDataset(test_embeddings_tensor, test_labels_tensor)
-test_loader = DataLoader(test_dataset, batch_size=4, shuffle=False)
+#test_dataset = TensorDataset(test_embeddings_tensor, test_labels_tensor)
+#test_loader = DataLoader(test_dataset, batch_size=4, shuffle=False)
 
 embedding_dim = 768
 hidden_dim = 128
 
 # Load the model
-model = SimpleNN(embedding_dim, hidden_dim)
+#model = SimpleNN(embedding_dim, hidden_dim)
 # model.load_state_dict(torch.load('path_to_save_model/first_model_state_dict.pth'))
+model = torch.load('models/first_model.pth')
 model.eval()  # Set the model to evaluation mode
 
 # Load tokenizer and model for embeddings
@@ -37,15 +38,16 @@ def preprocess_and_predict(tweet, tokenizer, embedding_model, classification_mod
 
     # Prediction
     with torch.no_grad():
-        prediction = classification_model(embeddings)
-
-    # Convert prediction to label
-    label = torch.argmax(prediction, dim=1).item()
+        logits = classification_model(embeddings)
+        probabilities = torch.sigmoid(logits)  # Convert logits to probabilities
+        print(probabilities)
+        label = torch.argmax(probabilities, dim=1).item()  # Get the index of max probability
     return label
 
 
 # Example tweet
 tweet = "i am so angry and mad, and very unhappy"
+tweet = "I am coming to the borders and I will kill you all"
 label = preprocess_and_predict(tweet, tokenizer, embedding_model, model)
 
 # Map the label to a meaningful category
@@ -56,6 +58,7 @@ print(f"The predicted category for the tweet is: {predicted_category}")
 
 
 ##### Real evaluation #####
+
 def evaluate_model(test_loader, tokenizer, embedding_model, classification_model):
     classification_model.eval()  # Set the model to evaluation mode
     correct = 0
@@ -76,14 +79,14 @@ def evaluate_model(test_loader, tokenizer, embedding_model, classification_model
 
     accuracy = 100 * correct / total
     # Log the accuracy to wandb
-    wandb.log({"test_accuracy": accuracy})
+    #wandb.log({"test_accuracy": accuracy})
     return accuracy
 
-
+"""
 # Evaluate the model
 accuracy = evaluate_model(test_loader, tokenizer, embedding_model, model)
 # print(f"Accuracy on the test set: {accuracy}%")
-
+"""
 ''' 
 def predict(
     model: torch.nn.Module,

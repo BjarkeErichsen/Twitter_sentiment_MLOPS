@@ -1,0 +1,13 @@
+# config.yaml
+
+defaults:
+  - _self_
+
+model:
+  embedding_dim: 768
+  hidden_dim: 128
+
+training:
+  learning_rate: 0.001
+  batch_size: 4
+  num_epochs: 5
