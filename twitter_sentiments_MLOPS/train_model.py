@@ -10,16 +10,13 @@ from twitter_sentiments_MLOPS.visualizations.visualize import log_confusion_matr
 import torch
 import wandb
 
-# from data.processed import embeddings
-# from models import embedded_model
+
 #wandb.init(project="twitter_sentiment_MLOPS", reinit=True, config="twitter_sentiments_MLOPS/sweep.yaml")
 #wandb.init(project="training", entity="twitter_sentiments_mlops")
 wandb.init(project="twitter_sentiments_mlops", entity="twitter_sentiments_mlops")
 #wandb.init( entity="twitter_sentiments_mlops")
 
-# Configure Hyperparameters
-
-
+########### Configure Hyperparameters ###########
 #learning_rate = 0.001
 #epochs = 5
 #batch_size = 4
@@ -47,7 +44,7 @@ val_dataset = TensorDataset(val_embeddings, val_labels)
 train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
 
-########### model ###############
+########### model ###########
 # Your model, criterion, and optimizer
 
 embedding_dim = 768 
@@ -59,7 +56,7 @@ optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 class_names = ["positive", "negative", "neutral", "irrelevant"]
 
 
-########## training ##############
+########### training ###########
 # Training and Validation Loop
 num_epochs = epochs
 for epoch in range(num_epochs):
