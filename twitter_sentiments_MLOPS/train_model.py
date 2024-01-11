@@ -12,7 +12,7 @@ import wandb
 
 # from data.processed import embeddings
 # from models import embedded_model
-wandb.init(project="twitter_sentiment_MLOPS", entity="avalentin37", reinit=True, config="path/to/sweep.yaml")
+wandb.init(project="twitter_sentiment_MLOPS", entity="avalentin37", reinit=True, config="twitter_sentiments_MLOPS/sweep.yaml")
 # Configure Hyperparameters
 
 
@@ -28,6 +28,9 @@ epochs = wandb.config.num_epochs
 
 ########### data load ###############
 # Split dataset into training and validation sets
+labels_tensor = torch.load("data/processed/labels_tensor.pt")
+embeddings_tensor = torch.load("data/processed/embeddings_tensor.pt")
+
 train_embeddings, val_embeddings, train_labels, val_labels = train_test_split(
     embeddings_tensor, labels_tensor, test_size=0.2, random_state=42
 )
@@ -104,9 +107,9 @@ for epoch in range(num_epochs):
 
 print("Finished Training and Validation")
 
-torch.save(model.state_dict(), "models/first_model_state_dict.pth")
+#torch.save(model.state_dict(), "models/first_model_state_dict.pth")
 
-# torch.save(model, 'models/first_model.pth') # saves the full model
+torch.save(model, 'models/first_model.pth') # saves the full model
 
 # Optional: Save the model's final state to wandb
 # wandb.save('models/first_model_state_dict.pth')
