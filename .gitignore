@@ -11,6 +11,8 @@ manual_test/
 
 wandb/
 
+notebooks/
+
 # Mac OS-specific storage files
 .DS_Store
 
