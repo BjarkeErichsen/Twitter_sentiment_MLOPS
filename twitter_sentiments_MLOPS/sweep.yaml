@@ -6,8 +6,8 @@ metric:
   goal: minimize
 parameters:
   learning_rate:
-    value: 0.01 # Add more values as needed project: twitter_sentiments_mlops
+    value: [0.01, 0.001] # Add more values as needed
   batch_size:
-    value: 16 # Add more values as needed
+    value: [16, 64] # Add more values as needed
   num_epochs:
-    value: 5 # Add more values as needed
+    value: [5, 10] # Add more values as needed

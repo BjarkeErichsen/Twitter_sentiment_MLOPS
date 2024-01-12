@@ -6,16 +6,27 @@ import torch.nn as nn
 from sklearn.model_selection import train_test_split
 from transformers import AutoTokenizer, AutoConfig, AutoModel
 from torch.profiler import profile, record_function, ProfilerActivity
-from twitter_sentiments_MLOPS.visualizations.visualize import log_confusion_matrix
+#from twitter_sentiments_MLOPS.visualizations.visualize import log_confusion_matrix
 import torch
 import wandb
 
 
 #wandb.init(project="twitter_sentiment_MLOPS", reinit=True, config="twitter_sentiments_MLOPS/sweep.yaml")
 #wandb.init(project="training", entity="twitter_sentiments_mlops")
-wandb.init(project="twitter_sentiments_mlops", entity="twitter_sentiments_mlops")
+#wandb.init(project="training_week2", entity="twitter_sentiments_mlops")
 #wandb.init( entity="twitter_sentiments_mlops")
+# Example sweep configuration
+sweep_configuration = {
+    "method": "random",
+    "name": "sweep",
+    "parameters": {
+        "batch_size": {"values": [16, 32, 64]},
+        "epochs": {"values": [5, 10, 15]},
+        "lr": {"max": 0.1, "min": 0.0001},
+    },
+}
 
+sweep_id = wandb.sweep(sweep=sweep_configuration, project="training_week2", entity="twitter_sentiments_mlops")
 ########### Configure Hyperparameters ###########
 #learning_rate = 0.001
 #epochs = 5
@@ -24,6 +35,7 @@ print(dict(wandb.config))
 learning_rate = wandb.config.learning_rate
 batch_size = wandb.config.batch_size
 epochs = wandb.config.num_epochs
+print(f"Batch size: {batch_size}, type: {type(batch_size)}")
 
 
 
@@ -146,5 +158,7 @@ torch.save(model, 'models/first_model.pth') # saves the full model
 
 # Optional: Save the model's final state to wandb
 # wandb.save('models/first_model_state_dict.pth')
+#wandb sweep twitter_sentiments_MLOPS/sweep.yaml
+#wandb agent avalentin37/twitter_sentiment_MLOPS-twitter_sentiments_MLOPS/ncvwjaym
 
-log_confusion_matrix(all_labels, all_predictions)
+#log_confusion_matrix(all_labels, all_predictions)
