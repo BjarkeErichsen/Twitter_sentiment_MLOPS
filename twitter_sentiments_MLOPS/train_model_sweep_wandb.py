@@ -20,8 +20,8 @@ sweep_configuration = {
     "metric": {"goal": "maximize", "name": "val_acc"},
     "parameters": {
         "batch_size": {"values": [16, 32, 64]},
-        "epochs": {"values": [5, 10, 15]},
-        "lr": {"max": 0.1, "min": 0.0001},
+        "epochs": {"values": [100]},
+        "lr": {"max": 0.001, "min": 0.00001},
     },
 }
 
@@ -38,7 +38,7 @@ def main():
     batch_size = wandb.config.batch_size
     epochs = wandb.config.epochs
     embedding_dim = 768 
-    hidden_dim = 128
+    hidden_dim = [128,64,4]
     model = SimpleNN(embedding_dim, hidden_dim)
     criterion = nn.BCEWithLogitsLoss()
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)
@@ -84,8 +84,9 @@ def main():
             train_loss += loss.item()
 
 
-            predicted = torch.sigmoid(outputs).data > 0.5  # Threshold at 0.5
-            correct_train += (predicted == labels).sum().item()
+            predicted = torch.argmax(torch.sigmoid(outputs).data, dim=1)  # Threshold at 0.5
+            labels_idx = torch.argmax(labels, dim=1)
+            correct_train += (predicted == labels_idx).sum().item()
             total_train += labels.numel()
 
             #for CrossEntropyLoss as loss function
@@ -114,8 +115,9 @@ def main():
 
 
 
-                predicted = torch.sigmoid(outputs).data > 0.5  # Apply sigmoid and threshold
-                correct_val += (predicted == labels).sum().item()
+                predicted = torch.argmax(torch.sigmoid(outputs).data, dim=1) 
+                labels_idx = torch.argmax(labels, dim=1)
+                correct_val += (predicted == labels_idx).sum().item()
                 total_val += labels.numel()
 
                 #for confussion matrix
@@ -123,7 +125,7 @@ def main():
                 predictions = torch.argmax(probabilities, dim=1)
                 all_labels.extend(labels.tolist())
                 all_predictions.extend(predictions.tolist())
-
+                
                 #for CrossEntropyLoss as loss function
                 #_, predicted = torch.max(outputs.data, 1)
                 #total_val += labels.size(0)
@@ -154,6 +156,6 @@ def main():
 
 # Run the main function with Hydra
 if __name__ == "__main__":
-    wandb.agent(sweep_id, function=main, count=2)
+    wandb.agent(sweep_id, function=main, count=10)
     #python twitter_sentiments_MLOPS/train_model_hydra.py training.learning_rate=0.002 training.batch_size=8
 

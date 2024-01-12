@@ -13,20 +13,9 @@ import wandb
 
 #wandb.init(project="twitter_sentiment_MLOPS", reinit=True, config="twitter_sentiments_MLOPS/sweep.yaml")
 #wandb.init(project="training", entity="twitter_sentiments_mlops")
-#wandb.init(project="training_week2", entity="twitter_sentiments_mlops")
+wandb.init(project="training_week2", entity="twitter_sentiments_mlops")
 #wandb.init( entity="twitter_sentiments_mlops")
-# Example sweep configuration
-sweep_configuration = {
-    "method": "random",
-    "name": "sweep",
-    "parameters": {
-        "batch_size": {"values": [16, 32, 64]},
-        "epochs": {"values": [5, 10, 15]},
-        "lr": {"max": 0.1, "min": 0.0001},
-    },
-}
 
-sweep_id = wandb.sweep(sweep=sweep_configuration, project="training_week2", entity="twitter_sentiments_mlops")
 ########### Configure Hyperparameters ###########
 #learning_rate = 0.001
 #epochs = 5
