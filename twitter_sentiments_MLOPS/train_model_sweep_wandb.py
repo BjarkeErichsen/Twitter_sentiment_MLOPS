@@ -6,7 +6,7 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
 from sklearn.model_selection import train_test_split
-from twitter_sentiments_MLOPS.models.model import SimpleNN, CNN_model
+from models.model import FCNN_model, CNN_model
 #from twitter_sentiments_MLOPS.visualizations.visualize import log_confusion_matrix
 import hydra.utils as hydra_utils
 
@@ -19,9 +19,9 @@ sweep_configuration = {
     "name": "sweep",
     "metric": {"goal": "maximize", "name": "val_acc"},
     "parameters": {
-        "batch_size": {"values": [16, 32, 64]},
+        "batch_size": {"values": [200]},
         "epochs": {"values": [100]},
-        "lr": {"max": 0.001, "min": 0.00001},
+        "lr": {"values":[0.01]},
     },
 }
 
@@ -40,10 +40,14 @@ def main():
     embedding_dim = 768 
     hidden_dim = [128,64,4]
     # model = SimpleNN(embedding_dim, hidden_dim)
-    model = CNN_model()
-    criterion = nn.BCEWithLogitsLoss()
+    model = FCNN_model()
+    criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)
-
+    # Check if CUDA is available
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    print("device", device)
+    # Move model to the chosen device
+    model.to(device)
 
     # Load data da
      # Now load the data using these paths
@@ -69,31 +73,28 @@ def main():
         train_loss = 0.0
         correct_train = 0
         total_train = 0
-
+        
         #with profile(activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA], 
         #             record_shapes=True, 
         ##             profile_memory=True, 
         #             on_trace_ready=torch.profiler.tensorboard_trace_handler('./logs/train')) as prof:
             
         for inputs, labels in train_loader:
+            inputs = inputs.to(device)
+            labels = labels.to(device)
             optimizer.zero_grad()
             outputs = model(inputs)
-            loss = criterion(outputs, labels.float())
-            #loss = criterion(outputs, labels) # for CrossEntropyLoss as loss function
+            #loss = criterion(outputs, labels.float())
+            loss = criterion(outputs, labels) # for CrossEntropyLoss as loss function
             loss.backward()
             optimizer.step()
             train_loss += loss.item()
 
-
-            predicted = torch.argmax(torch.sigmoid(outputs).data, dim=1)  # Threshold at 0.5
+            predicted = torch.argmax(outputs, dim=1) 
             labels_idx = torch.argmax(labels, dim=1)
+            
             correct_train += (predicted == labels_idx).sum().item()
-            total_train += labels.numel()
-
-            #for CrossEntropyLoss as loss function
-            #_, predicted = torch.max(outputs.data, 1)
-            #total_train += labels.size(0)
-            #correct_train += (predicted == labels).sum().item()
+            total_train += batch_size
 
         train_accuracy = 100 * correct_train / total_train
         wandb.log({"train_loss": train_loss / len(train_loader), "train_accuracy": train_accuracy, "epochs": epoch})
@@ -108,29 +109,22 @@ def main():
 
         with torch.no_grad():
             for inputs, labels in val_loader:
-
+                inputs = inputs.to(device)
+                labels = labels.to(device)
                 outputs = model(inputs)
                 loss = criterion(outputs, labels.float())
-                #loss = criterion(outputs, labels) # for CrossEntropyLoss as loss function
                 val_loss += loss.item()
 
-
-
-                predicted = torch.argmax(torch.sigmoid(outputs).data, dim=1) 
+                predicted = torch.argmax(outputs, dim=1) 
                 labels_idx = torch.argmax(labels, dim=1)
                 correct_val += (predicted == labels_idx).sum().item()
-                total_val += labels.numel()
+                total_val += batch_size
 
                 #for confussion matrix
                 probabilities = torch.sigmoid(outputs)
                 predictions = torch.argmax(probabilities, dim=1)
                 all_labels.extend(labels.tolist())
                 all_predictions.extend(predictions.tolist())
-                
-                #for CrossEntropyLoss as loss function
-                #_, predicted = torch.max(outputs.data, 1)
-                #total_val += labels.size(0)
-                #correct_val += (predicted == labels).sum().item()
 
         val_accuracy = 100 * correct_val / total_val
         wandb.log({"val_loss": val_loss / len(val_loader), "val_accuracy": val_accuracy, "epochs": epoch})
@@ -142,21 +136,12 @@ def main():
     print("Finished Training and Validation")
 
     #torch.save(model.state_dict(), "models/first_model_state_dict.pth")
-
-
-
-
-
     torch.save(model, 'models/first_model.pth') 
-    #torch.save(model, 'models/first_model.pth') # saves the full model
 
-    # Optional: Save the model's final state to wandb
     # wandb.save('models/first_model_state_dict.pth')
 
     #log_confusion_matrix(all_labels, all_predictions)
 
-# Run the main function with Hydra
 if __name__ == "__main__":
     wandb.agent(sweep_id, function=main, count=10)
-    #python twitter_sentiments_MLOPS/train_model_hydra.py training.learning_rate=0.002 training.batch_size=8
 
