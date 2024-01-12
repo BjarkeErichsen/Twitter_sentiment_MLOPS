@@ -6,7 +6,7 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
 from sklearn.model_selection import train_test_split
-from Twitter_sentiment_MLOPS.twitter_sentiments_MLOPS.models.model import SimpleNN, CNN_model
+from twitter_sentiments_MLOPS.models.model import SimpleNN, CNN_model
 #from twitter_sentiments_MLOPS.visualizations.visualize import log_confusion_matrix
 import hydra.utils as hydra_utils
 
