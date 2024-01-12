@@ -1,0 +1,9 @@
+outs:
+- md5: 305b468346f02954f39c6b3c15d61e82
+  size: 229418180
+  hash: md5
+  path: text_embeddings.pt
+  cloud:
+    remote_storage:
+      etag: 08a8a89fe696d683031001
+      version_id: '1705005057299496'

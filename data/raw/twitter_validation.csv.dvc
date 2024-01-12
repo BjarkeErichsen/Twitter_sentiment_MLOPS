@@ -1,0 +1,9 @@
+outs:
+- md5: 572151e90a6dfc8a0369164ead212b70
+  size: 164351
+  hash: md5
+  path: twitter_validation.csv
+  cloud:
+    remote_storage:
+      etag: 08a4eda8c896d683031001
+      version_id: '1705004994541220'

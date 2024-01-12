@@ -1,0 +1,9 @@
+outs:
+- md5: 93b325080d2c8375dd28637a2c1d9de4
+  size: 10325088
+  hash: md5
+  path: twitter_training.csv
+  cloud:
+    remote_storage:
+      etag: 088bf8c69ee0d583031001
+      version_id: '1704990411439115'

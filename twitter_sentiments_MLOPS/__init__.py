@@ -1,2 +1,2 @@
-from project_name.models.model import MyNeuralNet
-from project_name.predict_model import predict
+from twitter_sentiments_MLOPS.models.model import MyNeuralNet
+from twitter_sentiments_MLOPS.predict_model import predict
