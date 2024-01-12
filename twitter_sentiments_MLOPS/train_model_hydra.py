@@ -21,7 +21,7 @@ def main(cfg: DictConfig):
     config_dict = OmegaConf.to_container(cfg, resolve=True)
 
     # Initialize Weights & Biases
-    wandb.init(project="twitter_sentiments_mlops", entity="twitter_sentiments_mlops", config=config_dict)
+    wandb.init(project="hydra_training_train", entity="twitter_sentiments_mlops", config=config_dict)
 
     #wandb.init(project="twitter_sentiments_mlops", entity="twitter_sentiments_mlops", config=cfg)
 

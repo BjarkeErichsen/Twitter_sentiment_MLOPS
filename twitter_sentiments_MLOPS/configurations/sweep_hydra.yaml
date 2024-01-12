@@ -1,5 +1,5 @@
-program: twitter_sentiments_MLOPS/train_model.py
-project: training_week2
+program: twitter_sentiments_MLOPS/train_model_hydra.py
+project: hydra_training_train
 method: grid
 metric:
   name: loss

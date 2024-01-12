@@ -1,0 +1,83 @@
+{
+    "os": "Linux-6.5.12-100.fc37.x86_64-x86_64-with-glibc2.36",
+    "python": "3.10.13",
+    "heartbeatAt": "2024-01-12T09:57:20.763226",
+    "startedAt": "2024-01-12T09:57:19.901617",
+    "docker": null,
+    "cuda": null,
+    "args": [
+        "training.learning_rate=0.002",
+        "training.batch_size=8"
+    ],
+    "state": "running",
+    "program": "/home/avalentin/HCAI/MLOPS/twitter_sentiment_MLOPS/twitter_sentiments_MLOPS/train_model_hydra.py",
+    "codePathLocal": null,
+    "codePath": "twitter_sentiments_MLOPS/train_model_hydra.py",
+    "git": {
+        "remote": "https://github.com/AdrianValentin/Twitter_sentiment_MLOPS.git",
+        "commit": "dcfefa1618b0954080d190876e8ebbd46468f4b0"
+    },
+    "email": "adrianvalentin@live.dk",
+    "root": "/home/avalentin/HCAI/MLOPS/twitter_sentiment_MLOPS",
+    "host": "dhcp-10-209-199-157",
+    "username": "avalentin",
+    "executable": "/home/avalentin/anaconda3/envs/MLOPSP/bin/python",
+    "cpu_count": 4,
+    "cpu_count_logical": 8,
+    "cpu_freq": {
+        "current": 3.7668749999999998,
+        "min": 400.0,
+        "max": 4700.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 3.131,
+            "min": 400.0,
+            "max": 4700.0
+        },
+        {
+            "current": 3.808,
+            "min": 400.0,
+            "max": 4700.0
+        },
+        {
+            "current": 2.873,
+            "min": 400.0,
+            "max": 4700.0
+        },
+        {
+            "current": 3.19,
+            "min": 400.0,
+            "max": 4700.0
+        },
+        {
+            "current": 2.996,
+            "min": 400.0,
+            "max": 4700.0
+        },
+        {
+            "current": 3.022,
+            "min": 400.0,
+            "max": 4700.0
+        },
+        {
+            "current": 3.265,
+            "min": 400.0,
+            "max": 4700.0
+        },
+        {
+            "current": 4.015,
+            "min": 400.0,
+            "max": 4700.0
+        }
+    ],
+    "disk": {
+        "/": {
+            "total": 929.92578125,
+            "used": 262.671817779541
+        }
+    },
+    "memory": {
+        "total": 62.5737419128418
+    }
+}
