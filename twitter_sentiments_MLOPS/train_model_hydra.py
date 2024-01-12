@@ -19,9 +19,11 @@ def main(cfg: DictConfig):
     original_cwd = hydra_utils.get_original_cwd()
 
     config_dict = OmegaConf.to_container(cfg, resolve=True)
+    wandb_config = {"learning_rate": cfg.training.learning_rate, "batch_size": cfg.training.batch_size, "num_epochs": cfg.training.num_epochs}
 
     # Initialize Weights & Biases
-    wandb.init(project="hydra_training_train", entity="twitter_sentiments_mlops", config=config_dict)
+    wandb.init(project="hydra_training_train", entity="twitter_sentiments_mlops", config=wandb_config)
+
 
     #wandb.init(project="twitter_sentiments_mlops", entity="twitter_sentiments_mlops", config=cfg)
 
