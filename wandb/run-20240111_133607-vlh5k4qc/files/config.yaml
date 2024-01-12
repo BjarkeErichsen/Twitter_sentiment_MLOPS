@@ -1,0 +1,78 @@
+wandb_version: 1
+
+batch_size:
+  desc: null
+  value: 16
+learning_rate:
+  desc: null
+  value: 0.01
+num_epochs:
+  desc: null
+  value: 5
+_wandb:
+  desc: null
+  value:
+    python_version: 3.10.13
+    cli_version: 0.16.1
+    framework: huggingface
+    huggingface_version: 4.36.2
+    is_jupyter_run: false
+    is_kaggle_kernel: false
+    start_time: 1704976567.920318
+    t:
+      1:
+      - 1
+      - 5
+      - 11
+      - 49
+      - 53
+      - 55
+      - 105
+      2:
+      - 1
+      - 5
+      - 11
+      - 49
+      - 53
+      - 55
+      - 105
+      3:
+      - 23
+      - 37
+      4: 3.10.13
+      5: 0.16.1
+      6: 4.36.2
+      8:
+      - 5
+      13: linux-x86_64
+    visualize:
+      conf_mat:
+        panel_type: Vega2
+        panel_config:
+          panelDefId: wandb/confusion_matrix/v1
+          fieldSettings:
+            Actual: Actual
+            Predicted: Predicted
+            nPredictions: nPredictions
+          stringSettings:
+            title: ''
+          transform:
+            name: tableWithLeafColNames
+          userQuery:
+            queryFields:
+            - name: runSets
+              args:
+              - name: runSets
+                value: ${runSets}
+              fields:
+              - name: id
+                fields: []
+              - name: name
+                fields: []
+              - name: _defaultColorIndex
+                fields: []
+              - name: summaryTable
+                args:
+                - name: tableKey
+                  value: conf_mat_table
+                fields: []

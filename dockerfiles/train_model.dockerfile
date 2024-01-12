@@ -7,11 +7,11 @@ RUN apt update && \
 
 COPY requirements.txt requirements.txt
 COPY pyproject.toml pyproject.toml
-COPY project_name/ project_name/
+COPY twitter_sentiment_MLOPS/ twitter_sentiment_MLOPS/
 COPY data/ data/
 
 WORKDIR /
 RUN pip install -r requirements.txt --no-cache-dir
 RUN pip install . --no-deps --no-cache-dir
 
-ENTRYPOINT ["python", "-u", "project_name/train_model.py"]
+ENTRYPOINT ["python", "-u", "twitter_sentiment_MLOPS/train_model.py"]

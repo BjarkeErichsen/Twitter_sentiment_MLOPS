@@ -1,0 +1,80 @@
+{
+    "os": "Linux-6.5.12-100.fc37.x86_64-x86_64-with-glibc2.36",
+    "python": "3.10.13",
+    "heartbeatAt": "2024-01-11T11:47:16.655434",
+    "startedAt": "2024-01-11T11:47:15.873492",
+    "docker": null,
+    "cuda": null,
+    "args": [],
+    "state": "running",
+    "program": "/home/avalentin/HCAI/MLOPS/twitter_sentiment_MLOPS/twitter_sentiments_MLOPS/train_model.py",
+    "codePathLocal": "twitter_sentiments_MLOPS/train_model.py",
+    "codePath": "twitter_sentiments_MLOPS/train_model.py",
+    "git": {
+        "remote": "https://github.com/AdrianValentin/Twitter_sentiment_MLOPS.git",
+        "commit": "6dc4b3436abbad2742e8707b0607c7c90c78f096"
+    },
+    "email": "adrianvalentin@live.dk",
+    "root": "/home/avalentin/HCAI/MLOPS/twitter_sentiment_MLOPS",
+    "host": "fedora",
+    "username": "avalentin",
+    "executable": "/home/avalentin/anaconda3/envs/MLOPSP/bin/python",
+    "cpu_count": 4,
+    "cpu_count_logical": 8,
+    "cpu_freq": {
+        "current": 1188.638875,
+        "min": 400.0,
+        "max": 4700.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 399.101,
+            "min": 400.0,
+            "max": 4700.0
+        },
+        {
+            "current": 556.23,
+            "min": 400.0,
+            "max": 4700.0
+        },
+        {
+            "current": 1300.0,
+            "min": 400.0,
+            "max": 4700.0
+        },
+        {
+            "current": 485.29,
+            "min": 400.0,
+            "max": 4700.0
+        },
+        {
+            "current": 668.529,
+            "min": 400.0,
+            "max": 4700.0
+        },
+        {
+            "current": 1075.981,
+            "min": 400.0,
+            "max": 4700.0
+        },
+        {
+            "current": 1300.0,
+            "min": 400.0,
+            "max": 4700.0
+        },
+        {
+            "current": 973.335,
+            "min": 400.0,
+            "max": 4700.0
+        }
+    ],
+    "disk": {
+        "/": {
+            "total": 929.92578125,
+            "used": 262.6703071594238
+        }
+    },
+    "memory": {
+        "total": 62.5737419128418
+    }
+}
