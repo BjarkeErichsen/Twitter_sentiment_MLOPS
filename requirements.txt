@@ -1,6 +1,13 @@
+torch >= 2.1.0
+pandas >= 2.1.4
+numpy >= 1.26.3
+prompt_toolkit == 3.0.43
+Pygments == 2.17.2
+transformers >= 4.11.3
+wandb >= 0.12.6
+hydra-core >= 1.1.0
 matplotlib==3.8.2
-numpy==1.26.3
 project_name==0.2.175
 scikit_learn==1.3.2
-torch==2.1.2
 transformers==4.36.2
+
