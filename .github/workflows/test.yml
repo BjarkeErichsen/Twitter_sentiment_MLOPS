@@ -1,18 +1,13 @@
 name: "Run tests"
-
 on:
   push: #pull_request
     branches: [ master, main, dev, data, Model_and_training]
-
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-${{ github.head_ref }}
   cancel-in-progress: true
-
 jobs:
   build:
-
     runs-on: [ubuntu-latest] #windows-latest,mac-latest]
-
     steps:
     - name: Checkout
       uses: actions/checkout@v2 #must be first to get packages
@@ -21,13 +16,13 @@ jobs:
       with:
         python-version: "3.10"
         cache: "pip"
-        
+
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v0.2.0
       with:
-        project_id: mlops-tsa #project id on gcloud
-        service_account_key: ${{ secrets.GCP_SA_KEY }} #KEY is FULL JASON!
-        export_default_credentials: true 
+        project_id: mlops-tsa
+        service_account_key: ${{ secrets.GCP_SA_KEY }}
+        export_default_credentials: true
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
@@ -40,4 +35,4 @@ jobs:
     
     - name: Test with pytest
       run: |   #coverage run -m pytest tests/
-        pytest -v             
+        pytest -v    
