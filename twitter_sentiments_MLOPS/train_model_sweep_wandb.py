@@ -6,7 +6,7 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
 from sklearn.model_selection import train_test_split
-from twitter_sentiments_MLOPS.models.model import SimpleNN
+from Twitter_sentiment_MLOPS.twitter_sentiments_MLOPS.models.model import SimpleNN, CNN_model
 #from twitter_sentiments_MLOPS.visualizations.visualize import log_confusion_matrix
 import hydra.utils as hydra_utils
 
@@ -39,7 +39,8 @@ def main():
     epochs = wandb.config.epochs
     embedding_dim = 768 
     hidden_dim = [128,64,4]
-    model = SimpleNN(embedding_dim, hidden_dim)
+    # model = SimpleNN(embedding_dim, hidden_dim)
+    model = CNN_model()
     criterion = nn.BCEWithLogitsLoss()
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 
