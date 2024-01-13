@@ -13,7 +13,10 @@ import torch.optim as optim
 from pytorch_lightning.utilities.types import OptimizerLRScheduler, STEP_OUTPUT
 from torch.utils.data import DataLoader, TensorDataset
 from sklearn.model_selection import train_test_split
-from models.model import FCNN_model, CNN_model
+import torch
+import torch.nn as nn
+import torch.optim as optim
+import torch.nn.functional as F
 #from twitter_sentiments_MLOPS.visualizations.visualize import log_confusion_matrix
 import hydra.utils as hydra_utils
 from pytorch_lightning.callbacks import ModelCheckpoint
@@ -37,7 +40,22 @@ def sweep_config():
     sweep_id = wandb.sweep(sweep=sweep_configuration, project="sweeptest", entity="twitter_sentiments_mlops")
     return sweep_id
 
-  class LightningModel(pl.LightningModule):
+class FCNN_model(nn.Module):
+    def __init__(self):
+        super(FCNN_model, self).__init__()
+        self.fc1 = nn.Linear(768, 512)
+        self.fc2 = nn.Linear(512, 256)
+        self.fc3 = nn.Linear(256, 128)
+        self.fc4 = nn.Linear(128, 4)
+
+    def forward(self, x):
+        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc2(x))
+        x = F.relu(self.fc3(x))
+        x = self.fc4(x)
+        return x
+
+class LightningModel(pl.LightningModule):
     def __init__(self, learning_rate):
         super().__init__()
         self.model = FCNN_model()
