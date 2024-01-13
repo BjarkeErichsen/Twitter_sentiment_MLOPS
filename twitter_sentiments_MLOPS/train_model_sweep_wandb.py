@@ -26,10 +26,7 @@ sweep_configuration = {
 }
 
 sweep_id = wandb.sweep(sweep=sweep_configuration, project="sweeptest", entity="twitter_sentiments_mlops")
-
-
 # Config decorator for Hydra
-
 def main():
 
     run = wandb.init()
