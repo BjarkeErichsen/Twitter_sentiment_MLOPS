@@ -37,8 +37,7 @@ def sweep_config():
     sweep_id = wandb.sweep(sweep=sweep_configuration, project="sweeptest", entity="twitter_sentiments_mlops")
     return sweep_id
 
-
-class LightningModel(pl.LightningModule):
+  class LightningModel(pl.LightningModule):
     def __init__(self, learning_rate):
         super().__init__()
         self.model = FCNN_model()
@@ -62,6 +61,7 @@ class LightningModel(pl.LightningModule):
 
         # Update train accuracy
         self.train_accuracy.update(preds, y_idx)
+
 
         self.log("train_loss", loss)
         return loss
