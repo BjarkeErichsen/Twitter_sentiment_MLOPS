@@ -3,7 +3,9 @@ from transformers import AutoTokenizer, AutoModel
 from models.model import SimpleNN
 from torch.utils.data import DataLoader, TensorDataset
 import wandb
-
+import torch
+from pytorch_lightning import LightningModule
+from torch.utils.data import DataLoader, TensorDataset
 #wandb.init(project="twitter_sentiment_MLOPS")
 
 ############ data load ###############
@@ -82,6 +84,16 @@ def evaluate_model(test_loader, tokenizer, embedding_model, classification_model
     #wandb.log({"test_accuracy": accuracy})
     return accuracy
 
+
+class InferenceModel(LightningModule):
+    def __init__(self, model_path):
+        super().__init__()
+        # Load the trained model
+        self.model = LightningModel.load_from_checkpoint(model_path)
+
+    def forward(self, x):
+        # Forward pass through the model
+        return self.model(x)
 """
 # Evaluate the model
 accuracy = evaluate_model(test_loader, tokenizer, embedding_model, model)

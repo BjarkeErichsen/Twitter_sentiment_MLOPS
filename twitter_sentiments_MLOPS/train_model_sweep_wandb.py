@@ -154,9 +154,24 @@ def main():
     model = LightningModel(learning_rate=wandb.config.lr)
     data_module = LightningDataModule(batch_size=wandb.config.batch_size)
 
-    trainer = pl.Trainer(max_epochs=wandb.config.epochs, logger=wandb_logger, callbacks=[checkpoint_callback],
-                         limit_train_batches=1.0,  # Use the entire training dataset per epoch
-                        limit_val_batches=1.0)    # Use the entire validation dataset per epoch)
+    if torch.cuda.is_available():
+        # If CUDA is available, use all available GPUs
+        gpus = -1
+        print("CUDA is available. Using GPUs.")
+    else:
+        # If CUDA is not available, do not use GPUs
+        gpus = 0
+        print("CUDA is not available. Using CPU.")
+
+    # Trainer setup
+    trainer = pl.Trainer(
+        max_epochs=wandb.config.epochs,
+        gpus=gpus,
+        logger=wandb_logger,
+        callbacks=[checkpoint_callback],
+        limit_train_batches=1.0,  # Use the entire training dataset per epoch
+        limit_val_batches=1.0  # Use the entire validation dataset per epoch
+    )
     trainer.fit(model, datamodule=data_module)
 
 if __name__ == "__main__":
