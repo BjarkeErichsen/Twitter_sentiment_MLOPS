@@ -7,11 +7,12 @@ RUN apt update && \
 
 COPY requirements.txt requirements.txt
 COPY pyproject.toml pyproject.toml
-COPY twitter_sentiment_MLOPS/ twitter_sentiment_MLOPS/
+COPY twitter_sentiments_MLOPS/ twitter_sentiments_MLOPS/
 COPY data/ data/
+COPY models/ models/
 
 WORKDIR /
 RUN pip install -r requirements.txt --no-cache-dir
 RUN pip install . --no-deps --no-cache-dir
 
-ENTRYPOINT ["python", "-u", "twitter_sentiment_MLOPS/train_model.py"]
+ENTRYPOINT ["python", "-u", "twitter_sentiments_MLOPS/train_model_sweep_wandb.py"]
