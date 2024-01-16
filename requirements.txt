@@ -13,3 +13,4 @@ dvc[gs]
 joblib
 matplotlib
 seaborn
+pytorch-lightning
