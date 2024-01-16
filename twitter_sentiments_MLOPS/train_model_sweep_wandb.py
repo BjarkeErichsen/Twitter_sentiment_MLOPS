@@ -21,8 +21,8 @@ import torch.nn.functional as F
 import hydra.utils as hydra_utils
 from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning.loggers import WandbLogger
-
 import wandb
+
 #Run this at start
 #wandb.login()
 def sweep_config():
@@ -32,8 +32,8 @@ def sweep_config():
         "metric": {"goal": "maximize", "name": "val_acc"},
         "parameters": {
             "batch_size": {"values": [32, 64, 128]},  # Discrete values
-            "epochs": {"min": 10, "max": 100, "distribution": "int_uniform"},  # Integer range
-            "lr": {"min": 0.0001, "max": 0.01, "distribution": "uniform"},  # Log scale for learning rate
+            "epochs": {"min": 1, "max": 2, "distribution": "int_uniform"},  # Integer range
+            "lr": {"min": 0.001, "max": 0.01, "distribution": "uniform"},  # Log scale for learning rate
         },
     }
 
@@ -144,7 +144,7 @@ def main():
     wandb.init()
     wandb_logger = WandbLogger(project="twitter_sentiment_MLOPS", entity="twitter_sentiments_mlops")
     checkpoint_callback = ModelCheckpoint(
-        dirpath="twitter_sentiments_MLOPS/models/FCNN",
+        dirpath="models/FCNN",
         filename="best-checkpoint",
         save_top_k=1,
         verbose=True,
@@ -159,10 +159,12 @@ def main():
                         limit_val_batches=1.0)    # Use the entire validation dataset per epoch)
     trainer.fit(model, datamodule=data_module)
 
+    
+
 if __name__ == "__main__":
     wandb.finish()
     sweep_id = sweep_config()
-    wandb.agent(sweep_id, function=main, count=30)
+    wandb.agent(sweep_id, function=main, count=1)
     wandb.finish()
 
 #MisconfigurationException("`ModelCheckpoint(monitor='val_acc')` could not find the monitored key in the returned metrics: ['train_loss', 'val_loss', 'epoch', 'step']. HINT: Did you call `log('val_acc', value)` in the `LightningModule`?")
