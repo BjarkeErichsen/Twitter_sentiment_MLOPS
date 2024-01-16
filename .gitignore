@@ -1,14 +1,22 @@
 docs/site/
+wandb/
+
+#ignorer png and jpg files
+*.png
+*.jpg
+
 
 #data files
 data/raw/twitter_training.csv
 data/raw/twitter_validation.csv
+twitter_sentiments_MLOPS/models/FCNN/
 # test cache
 manual_test/
 
 # other local dev info
 .vscode/
 
+models/
 wandb/
 
 notebooks/

@@ -1,0 +1,7 @@
+model:
+  embedding_dim: 768
+  hidden_dim: 128
+training:
+  learning_rate: 0.002
+  batch_size: 8
+  num_epochs: 5
