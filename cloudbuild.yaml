@@ -1,7 +1,7 @@
 steps:
   # Build the container image: Container name is KNNcontainer  
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'gcr.io/mlops-tsa/knncontainer:latest', '-f', 'dockerfiles/KNN_train', '.'] 
+    args: ['build', '-t', 'gcr.io/mlops-tsa/knncontainer:latest', '-f', 'dockerfiles/KNN_train.dockerfile', '.'] 
   # Push the container image to Container Registry
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'gcr.io/mlops-tsa/knncontainer:latest']
