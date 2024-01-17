@@ -3,8 +3,6 @@ from pydantic import BaseModel
 import torch
 from twitter_sentiments_MLOPS.predict_model import InferenceModel
 import os
-from transformers import AutoTokenizer, AutoModel
-import pytorch_lightning as pl
 
 app = FastAPI()
 #uvicorn --reload --port 8000 twitter_sentiments_MLOPS.api:app

@@ -1,24 +1,15 @@
 """Train the model"""
 """Run the code using: python twitter_sentiments_MLOPS\train_model_sweep_wandb.py in root directory"""
 
-from typing import Any
-import hydra
-from omegaconf import DictConfig, OmegaConf
 import os
 import pytorch_lightning as pl
 import torchmetrics
-import torch
-import torch.nn as nn
-import torch.optim as optim
-from pytorch_lightning.utilities.types import OptimizerLRScheduler, STEP_OUTPUT
 from torch.utils.data import DataLoader, TensorDataset
 from sklearn.model_selection import train_test_split
 import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
-#from twitter_sentiments_MLOPS.visualizations.visualize import log_confusion_matrix
-import hydra.utils as hydra_utils
 from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning.loggers import WandbLogger
 import wandb
@@ -181,7 +172,7 @@ def main():
 
     model = LightningModel(learning_rate=wandb.config.lr)
     data_module = LightningDataModule(batch_size=wandb.config.batch_size)
-    accelerator ="gpu" if torch.cuda.is_available() else None
+    accelerator ="gpu" if torch.cuda.is_available() else "cpu"
 
     # Trainer setup
     trainer = pl.Trainer(
@@ -209,10 +200,3 @@ if __name__ == "__main__":
 
 
 #MisconfigurationException("`ModelCheckpoint(monitor='val_acc')` could not find the monitored key in the returned metrics: ['train_loss', 'val_loss', 'epoch', 'step']. HINT: Did you call `log('val_acc', value)` in the `LightningModule`?")
-
-
-
-
-
-
-
