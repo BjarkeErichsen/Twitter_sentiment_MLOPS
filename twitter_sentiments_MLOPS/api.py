@@ -21,12 +21,6 @@ model_path = os.path.join(os.getcwd(), 'twitter_sentiments_MLOPS', 'models', 'FC
 
 model = InferenceModel(model_path)
 
-print("test tweet:   ", model("Test tweet"))
-#model.eval()  # Set the model to evaluation mode
-#My path Twitter_sentiments_MLOPS/twitter_sentiments_MLOPS/api.py
-#I want to load a model, path: Twitter_sentiments_MLOPS/models/first_model.pth
-#The function im using is InferenceModel(model_path), which has the path Twitter_sentiments_MLOPS/twitter_sentiments_MLOPS/api.py
-
 @app.post("/predict/")
 def predict_tweet(request: TweetRequest):
     tweet = request.tweet.strip()
