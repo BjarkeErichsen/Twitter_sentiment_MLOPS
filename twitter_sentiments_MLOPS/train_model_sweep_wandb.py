@@ -24,7 +24,7 @@ from pytorch_lightning.loggers import WandbLogger
 import wandb
 
 #Run this at start
-#wandb.login()
+#
 def sweep_config():
     sweep_configuration = {
         "method": "random",
@@ -140,7 +140,19 @@ class LightningDataModule(pl.LightningDataModule):
         return DataLoader(self.val_dataset, batch_size=self.batch_size, shuffle=False, num_workers=11,persistent_workers=True)
 
 def main():
+    # Check if WANDB_API_KEY is set as an environment variable
+    api_key = os.getenv('WANDB_API_KEY')
+    # If WANDB_API_KEY is provided, use it to log in
+    if api_key:
+        wandb.login(key=api_key)
+    else:
+        # Try to use locally stored credentials (wandb will automatically look for it)
+        # This will also prompt for login in the terminal if not already logged in
+        wandb.login()
+    
     # Initialize wandb
+    wandb.login(key=api_key)
+
     wandb.init()
     wandb_logger = WandbLogger(project="twitter_sentiment_MLOPS", entity="twitter_sentiments_mlops")
     checkpoint_callback = ModelCheckpoint(
