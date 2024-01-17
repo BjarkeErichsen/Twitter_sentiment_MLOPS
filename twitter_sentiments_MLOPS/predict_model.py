@@ -1,12 +1,84 @@
 import torch
 from transformers import AutoTokenizer, AutoModel
-from models.model import SimpleNN
 from torch.utils.data import DataLoader, TensorDataset
+import pytorch_lightning as pl
 import wandb
 import torch
-from pytorch_lightning import LightningModule
+import pytorch_lightning as pl
+import argparse
+from train_model_sweep_wandb import LightningModel
 from torch.utils.data import DataLoader, TensorDataset
 #wandb.init(project="twitter_sentiment_MLOPS")
+
+
+
+class InferenceModel(pl.LightningModule):
+    def __init__(self, model_path):
+        super().__init__()
+        # Load the trained model
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.model = torch.load('models/first_model.pth', map_location=torch.device(device))
+        self.tokenizer = AutoTokenizer.from_pretrained("cardiffnlp/twitter-roberta-base-sentiment-latest")
+        self.embedder = AutoModel.from_pretrained("cardiffnlp/twitter-roberta-base-sentiment-latest")
+        self.label_mapping = {0: "positive", 1: "negative", 2: "neutral", 3: "irrelevant"}
+
+    def forward(self, x):
+        # Forward pass through the model
+        x = self.tokenizer(x, padding=True, truncation=True, max_length=512, return_tensors="pt")
+        with torch.no_grad():
+            x = self.embedder(**x).pooler_output
+        pred = self.model(x)
+        idx = torch.argmax(pred).item()
+        return self.label_mapping[idx]
+def parse_args():
+    parser = argparse.ArgumentParser(description="Tweet sentiment inference")
+    parser.add_argument("--tweet", type=str, required=True, help="Tweet text for sentiment analysis")
+    return parser.parse_args()
+
+def main():
+    # Parse arguments from command line
+    args = parse_args()
+    tweet = args.tweet
+
+    # Assuming you have a model path
+    model_path = 'models/first_model.pth'
+
+    # Load the model
+    model = InferenceModel(model_path=model_path)
+    model.eval()  # Set the model to evaluation mode
+
+    # Make a prediction
+    with torch.no_grad():
+        prediction = model(tweet)
+        print("Prediction:", prediction)
+
+if __name__ == "__main__":
+    main()
+
+
+
+"""
+
+# Evaluate the model
+accuracy = evaluate_model(test_loader, tokenizer, embedding_model, model)
+# print(f"Accuracy on the test set: {accuracy}%")
+
+
+def predict(
+    model: torch.nn.Module,
+    dataloader: torch.utils.data.DataLoader
+) -> None:
+    '''Run prediction for a given model and dataloader.
+    
+    Args:
+        model: model to use for prediction
+        dataloader: dataloader with batches
+    
+    Returns
+        Tensor of shape [N, d] where N is the number of samples and d is the output dimension of the model
+
+    '''
+    return torch.cat([model(batch) for batch in dataloader], 0)
 
 ############ data load ###############
 # Assuming test_embeddings_tensor and test_labels_tensor are your test dataset tensors
@@ -46,7 +118,6 @@ def preprocess_and_predict(tweet, tokenizer, embedding_model, classification_mod
         label = torch.argmax(probabilities, dim=1).item()  # Get the index of max probability
     return label
 
-
 # Example tweet
 tweet = "i am so angry and mad, and very unhappy"
 tweet = "I am coming to the borders and I will kill you all"
@@ -83,36 +154,4 @@ def evaluate_model(test_loader, tokenizer, embedding_model, classification_model
     # Log the accuracy to wandb
     #wandb.log({"test_accuracy": accuracy})
     return accuracy
-
-
-class InferenceModel(LightningModule):
-    def __init__(self, model_path):
-        super().__init__()
-        # Load the trained model
-        self.model = LightningModel.load_from_checkpoint(model_path)
-
-    def forward(self, x):
-        # Forward pass through the model
-        return self.model(x)
 """
-# Evaluate the model
-accuracy = evaluate_model(test_loader, tokenizer, embedding_model, model)
-# print(f"Accuracy on the test set: {accuracy}%")
-"""
-''' 
-def predict(
-    model: torch.nn.Module,
-    dataloader: torch.utils.data.DataLoader
-) -> None:
-    """Run prediction for a given model and dataloader.
-    
-    Args:
-        model: model to use for prediction
-        dataloader: dataloader with batches
-    
-    Returns
-        Tensor of shape [N, d] where N is the number of samples and d is the output dimension of the model
-
-    """
-    return torch.cat([model(batch) for batch in dataloader], 0)
-    '''

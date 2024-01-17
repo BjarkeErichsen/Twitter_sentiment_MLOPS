@@ -65,6 +65,8 @@ class LightningModel(pl.LightningModule):
         self.train_accuracy = torchmetrics.Accuracy(task='multiclass', num_classes=4)
         self.val_accuracy = torchmetrics.Accuracy(task='multiclass', num_classes=4)
     def forward(self, x):
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        x.to(self.device)
         return self.model(x)
     def configure_optimizers(self):
         optimizer = optim.Adam(self.model.parameters(), lr=self.hparams.learning_rate)
@@ -121,9 +123,10 @@ class LightningDataModule(pl.LightningDataModule):
         self.batch_size = batch_size
 
     def setup(self, stage: str = None):
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         # Load data
-        labels_tensor = torch.load("data/processed/labels.pt")
-        embeddings_tensor = torch.load("data/processed/text_embeddings.pt")
+        labels_tensor = torch.load("data/processed/labels.pt").to(self.device)
+        embeddings_tensor = torch.load("data/processed/text_embeddings.pt").to(self.device)
 
         # Split dataset
         train_embeddings, val_embeddings, train_labels, val_labels = train_test_split(
