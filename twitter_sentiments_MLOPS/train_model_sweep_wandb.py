@@ -150,9 +150,6 @@ def main():
         # This will also prompt for login in the terminal if not already logged in
         wandb.login()
     
-    # Initialize wandb
-    wandb.login(key=api_key)
-
     wandb.init()
     wandb_logger = WandbLogger(project="twitter_sentiment_MLOPS", entity="twitter_sentiments_mlops")
     checkpoint_callback = ModelCheckpoint(
