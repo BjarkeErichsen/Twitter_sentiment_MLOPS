@@ -128,7 +128,7 @@ class LightningDataModule(pl.LightningDataModule):
         # Load data
         if cloud_run:
             labels_tensor =     torch.load('/gcs/bucket_processed_data/data/processed/labels.pt')
-            embeddings_tensor = torch.load('/gcs/bucket_processed_data/data/processed/text_embeddings.pt')
+            embeddings_tensor = torch.load('/gcs/bucket_processed_data/data/processed/text_embeddings')
         else:
             labels_tensor = torch.load("data/processed/labels.pt")#.to(self.device)
             embeddings_tensor = torch.load("data/processed/text_embeddings.pt")#.to(self.device)
@@ -195,11 +195,11 @@ def main():
 
 if __name__ == "__main__":
 
-    """REMEMBER THIS"""
+    """REMEMBER THIS BEFORE PUSHING"""
     cloud_run = True
-    """REMEMBER THIS"""
+    """REMEMBER THIS BEFORE PUSHING"""
 
-    wandb.finish()
+    wandb.finish() #Trying to finish any remaining wandb processes before starting a new one.
     sweep_id = sweep_config()
     wandb.agent(sweep_id, function=main, count=30)
     wandb.finish()
