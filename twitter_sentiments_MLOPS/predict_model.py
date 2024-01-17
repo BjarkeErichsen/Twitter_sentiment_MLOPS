@@ -6,7 +6,6 @@ import wandb
 import torch
 import pytorch_lightning as pl
 import argparse
-from train_model_sweep_wandb import LightningModel
 from torch.utils.data import DataLoader, TensorDataset
 #wandb.init(project="twitter_sentiment_MLOPS")
 
@@ -30,14 +29,15 @@ class InferenceModel(pl.LightningModule):
         pred = self.model(x)
         idx = torch.argmax(pred).item()
         return self.label_mapping[idx]
-def parse_args():
+
+def tweet_parse_args():
     parser = argparse.ArgumentParser(description="Tweet sentiment inference")
     parser.add_argument("--tweet", type=str, required=True, help="Tweet text for sentiment analysis")
     return parser.parse_args()
 
 def main():
     # Parse arguments from command line
-    args = parse_args()
+    args = tweet_parse_args()
     tweet = args.tweet
 
     # Assuming you have a model path
