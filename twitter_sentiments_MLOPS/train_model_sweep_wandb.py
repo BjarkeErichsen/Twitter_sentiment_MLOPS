@@ -21,8 +21,8 @@ import torch.nn.functional as F
 import hydra.utils as hydra_utils
 from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning.loggers import WandbLogger
-
 import wandb
+
 #Run this at start
 #wandb.login()
 
@@ -36,6 +36,7 @@ def sweep_config():
             "epochs": {"min": 10, "max": 100, "distribution": "int_uniform"},  # Integer range
             "lr": {"values": [0.00001, 0.00003, 0.00005, 0.0001, 0.0003, 0.0005, 0.001, 0.003, 0.005]
 },  # Log scale for learning rate
+
         },
     }
 
@@ -172,8 +173,20 @@ def main():
     )
     trainer.fit(model, datamodule=data_module)
 
+    
+
 if __name__ == "__main__":
     wandb.finish()
     sweep_id = sweep_config()
     wandb.agent(sweep_id, function=main, count=30)
     wandb.finish()
+
+
+#MisconfigurationException("`ModelCheckpoint(monitor='val_acc')` could not find the monitored key in the returned metrics: ['train_loss', 'val_loss', 'epoch', 'step']. HINT: Did you call `log('val_acc', value)` in the `LightningModule`?")
+
+
+
+
+
+
+
