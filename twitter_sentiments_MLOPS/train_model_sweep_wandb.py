@@ -123,8 +123,6 @@ class LightningDataModule(pl.LightningDataModule):
     def setup(self, stage: str = None):
         # Load data
         labels_tensor = torch.load("data/processed/labels.pt")
-        data = torch.load('/gcs/<my-bucket-name>/data.pt')
-
         embeddings_tensor = torch.load("data/processed/text_embeddings.pt")
             # loading from a bucket using mounted file system
         # writing to a bucket using mounted file system
