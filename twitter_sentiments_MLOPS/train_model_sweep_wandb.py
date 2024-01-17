@@ -123,8 +123,11 @@ class LightningDataModule(pl.LightningDataModule):
     def setup(self, stage: str = None):
         # Load data
         labels_tensor = torch.load("data/processed/labels.pt")
-        embeddings_tensor = torch.load("data/processed/text_embeddings.pt")
+        data = torch.load('/gcs/<my-bucket-name>/data.pt')
 
+        embeddings_tensor = torch.load("data/processed/text_embeddings.pt")
+            # loading from a bucket using mounted file system
+        # writing to a bucket using mounted file system
         # Split dataset
         train_embeddings, val_embeddings, train_labels, val_labels = train_test_split(
             embeddings_tensor, labels_tensor, test_size=0.2, random_state=42
@@ -152,14 +155,19 @@ def main():
     
     wandb.init()
     wandb_logger = WandbLogger(project="twitter_sentiment_MLOPS", entity="twitter_sentiments_mlops")
+
+
+    gcs_checkpoint_path = 'gs://bucket_processed_data/models/FCNN'
+    # Ensure the GCS filesystem is used by the ModelCheckpoint
     checkpoint_callback = ModelCheckpoint(
-        dirpath="models/FCNN",
+        dirpath=gcs_checkpoint_path,
         filename="best-checkpoint",
         save_top_k=1,
         verbose=True,
         monitor="val_acc",
         mode="max"
     )
+
     model = LightningModel(learning_rate=wandb.config.lr)
     data_module = LightningDataModule(batch_size=wandb.config.batch_size)
 
