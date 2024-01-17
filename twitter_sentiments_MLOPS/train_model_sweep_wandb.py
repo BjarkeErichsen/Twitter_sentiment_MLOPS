@@ -24,8 +24,6 @@ from pytorch_lightning.loggers import WandbLogger
 import wandb
 
 #Run this at start
-#wandb.login()
-
 def sweep_config():
     sweep_configuration = {
         "method": "grid",
@@ -128,6 +126,7 @@ class LightningDataModule(pl.LightningDataModule):
     def setup(self, stage: str = None):
         #self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         # Load data
+
         labels_tensor = torch.load("data/processed/labels.pt")#.to(self.device)
         embeddings_tensor = torch.load("data/processed/text_embeddings.pt")#.to(self.device)
 
@@ -146,18 +145,32 @@ class LightningDataModule(pl.LightningDataModule):
         return DataLoader(self.val_dataset, batch_size=self.batch_size, shuffle=False, num_workers=6,persistent_workers=True)
 
 def main():
-    # Initialize wandb
+    # Check if WANDB_API_KEY is set as an environment variable
+    api_key = os.getenv('WANDB_API_KEY')
+    # If WANDB_API_KEY is provided, use it to log in
+    if api_key:
+        wandb.login(key=api_key)
+    else:
+        # Try to use locally stored credentials (wandb will automatically look for it)
+        # This will also prompt for login in the terminal if not already logged in
+        wandb.login()
+    
     wandb.init()
     run_name = wandb.run.name
     wandb_logger = WandbLogger(project="twitter_sentiment_MLOPS", entity="twitter_sentiments_mlops")
+
+
+    gcs_checkpoint_path = 'gs://bucket_processed_data/models/FCNN'
+    # Ensure the GCS filesystem is used by the ModelCheckpoint
     checkpoint_callback = ModelCheckpoint(
-        dirpath=f"twitter_sentiments_MLOPS/models/FCNN/{run_name}",  # Save in a folder named after the run
-        filename="{epoch}-{val_loss:.2f}",  # You can add more details to the filename like epoch and val_loss
+        dirpath=gcs_checkpoint_path,
+        filename="best-checkpoint",
         save_top_k=1,
         verbose=True,
         monitor="val_acc",
         mode="max"
     )
+
     model = LightningModel(learning_rate=wandb.config.lr)
     data_module = LightningDataModule(batch_size=wandb.config.batch_size)
     accelerator ="gpu" if torch.cuda.is_available() else None

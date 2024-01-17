@@ -9,7 +9,6 @@ COPY requirements.txt requirements.txt
 COPY pyproject.toml pyproject.toml
 COPY twitter_sentiments_MLOPS/ twitter_sentiments_MLOPS/
 COPY data/ data/
-COPY models/ models/
 
 WORKDIR /
 RUN pip install -r requirements.txt --no-cache-dir
