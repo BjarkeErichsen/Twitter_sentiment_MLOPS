@@ -126,9 +126,12 @@ class LightningDataModule(pl.LightningDataModule):
     def setup(self, stage: str = None):
         #self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         # Load data
-
-        labels_tensor = torch.load("data/processed/labels.pt")#.to(self.device)
-        embeddings_tensor = torch.load("data/processed/text_embeddings.pt")#.to(self.device)
+        if cloud_run:
+            labels_tensor =     torch.load('/gcs/bucket_processed_data/data/processed/labels.pt')
+            embeddings_tensor = torch.load('/gcs/bucket_processed_data/data/processed/text_embeddings.pt')
+        else:
+            labels_tensor = torch.load("data/processed/labels.pt")#.to(self.device)
+            embeddings_tensor = torch.load("data/processed/text_embeddings.pt")#.to(self.device)
 
         # Split dataset
         train_embeddings, val_embeddings, train_labels, val_labels = train_test_split(
@@ -159,11 +162,13 @@ def main():
     run_name = wandb.run.name
     wandb_logger = WandbLogger(project="twitter_sentiment_MLOPS", entity="twitter_sentiments_mlops")
 
-
-    gcs_checkpoint_path = 'gs://bucket_processed_data/models/FCNN'
+    if cloud_run:
+        checkpoint_path = 'gs://bucket_processed_data/models/FCNN'
+    else:
+        checkpoint_path = f'dirpath=f"twitter_sentiments_MLOPS/models/FCNN/{run_name}"'
     # Ensure the GCS filesystem is used by the ModelCheckpoint
     checkpoint_callback = ModelCheckpoint(
-        dirpath=gcs_checkpoint_path,
+        dirpath=checkpoint_path,
         filename="best-checkpoint",
         save_top_k=1,
         verbose=True,
@@ -189,6 +194,11 @@ def main():
     
 
 if __name__ == "__main__":
+
+    """REMEMBER THIS"""
+    cloud_run = True
+    """REMEMBER THIS"""
+
     wandb.finish()
     sweep_id = sweep_config()
     wandb.agent(sweep_id, function=main, count=30)
