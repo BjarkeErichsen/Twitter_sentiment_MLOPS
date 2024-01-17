@@ -26,13 +26,16 @@ import wandb
 #Run this at start
 def sweep_config():
     sweep_configuration = {
-        "method": "grid",
+        "method": "random",
         "name": "sweep",
         "metric": {"goal": "maximize", "name": "val_acc"},
         "parameters": {
-            "batch_size": {"values": [96, 128, 192, 256, 384, 512, 640, 768, 896, 1024, 1280, 1536, 1792, 2048, 2304, 2560, 2816, 3072, 3328, 3584, 3840, 4096, 4352, 4608, 4864, 5120]},  # Discrete values
-            "epochs": {"min": 10, "max": 100, "distribution": "int_uniform"},  # Integer range
-            "lr": {"values": [0.00001, 0.00003, 0.00005, 0.0001, 0.0003, 0.0005, 0.001, 0.003, 0.005]
+            #"batch_size": {"values": [96, 128, 192, 256, 384, 512, 640, 768, 896, 1024, 1280, 1536, 1792, 2048, 2304, 2560, 2816, 3072, 3328, 3584, 3840, 4096, 4352, 4608, 4864, 5120]},  # Discrete values
+            "batch_size": {"values": [16, 32, 96]},  # Discrete values
+            #"epochs": {"min": 10, "max": 100, "distribution": "int_uniform"},  # Integer range
+            "epochs": {"min": 3, "max": 4, "distribution": "int_uniform"},
+            #"lr": {"values": [0.00001, 0.00003, 0.00005, 0.0001, 0.0003, 0.0005, 0.001, 0.003, 0.005]
+            "lr": {"values": [0.001, 0.003, 0.005, 0.01]
 },  # Log scale for learning rate
 
         },
@@ -201,7 +204,7 @@ if __name__ == "__main__":
 
     wandb.finish() #Trying to finish any remaining wandb processes before starting a new one.
     sweep_id = sweep_config()
-    wandb.agent(sweep_id, function=main, count=30)
+    wandb.agent(sweep_id, function=main, count=2)
     wandb.finish()
 
 
