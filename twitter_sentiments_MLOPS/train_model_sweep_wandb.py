@@ -21,10 +21,13 @@ import torch.nn.functional as F
 import hydra.utils as hydra_utils
 from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning.loggers import WandbLogger
+from pytorch_lightning.profilers import SimpleProfiler, AdvancedProfiler, PyTorchProfiler
+from pytorch_lightning.loggers import TensorBoardLogger
 
 import wandb
 #Run this at start
 #wandb.login()
+# profiling
 def sweep_config():
     sweep_configuration = {
         "method": "random",
@@ -32,7 +35,7 @@ def sweep_config():
         "metric": {"goal": "maximize", "name": "val_acc"},
         "parameters": {
             "batch_size": {"values": [32, 64, 128]},  # Discrete values
-            "epochs": {"min": 10, "max": 100, "distribution": "int_uniform"},  # Integer range
+            "epochs": {"min": 1, "max": 2, "distribution": "int_uniform"},  # Integer range
             "lr": {"min": 0.0001, "max": 0.01, "distribution": "uniform"},  # Log scale for learning rate
         },
     }
@@ -53,6 +56,12 @@ class FCNN_model(nn.Module):
         x = F.relu(self.fc2(x))
         x = F.relu(self.fc3(x))
         x = self.fc4(x)
+        return x
+    
+    def get_embed(self, x):
+        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc2(x))
+        x = self.fc3(x)
         return x
 
 class LightningModel(pl.LightningModule):
@@ -141,6 +150,7 @@ class LightningDataModule(pl.LightningDataModule):
 
 def main():
     # Initialize wandb
+    use_profiler = False
     wandb.init()
     wandb_logger = WandbLogger(project="twitter_sentiment_MLOPS", entity="twitter_sentiments_mlops")
     checkpoint_callback = ModelCheckpoint(
@@ -154,7 +164,14 @@ def main():
     model = LightningModel(learning_rate=wandb.config.lr)
     data_module = LightningDataModule(batch_size=wandb.config.batch_size)
 
-    trainer = pl.Trainer(max_epochs=wandb.config.epochs, logger=wandb_logger, callbacks=[checkpoint_callback],
+    if use_profiler:
+        profiler = PyTorchProfiler(dirpath="profiler_logs", filename="pytorch_profiler_logs")
+        #profiler = AdvancedProfiler(dirpath="profiler_logs", filename="advanced_profiler_logs")
+        #profiler = SimpleProfiler(dirpath="profiler_logs", filename="simple_profiler_logs")
+    else:
+        profiler = None
+
+    trainer = pl.Trainer(max_epochs=wandb.config.epochs, logger=wandb_logger, callbacks=[checkpoint_callback], profiler=profiler,
                          limit_train_batches=1.0,  # Use the entire training dataset per epoch
                         limit_val_batches=1.0)    # Use the entire validation dataset per epoch)
     trainer.fit(model, datamodule=data_module)
@@ -162,8 +179,10 @@ def main():
 if __name__ == "__main__":
     wandb.finish()
     sweep_id = sweep_config()
-    wandb.agent(sweep_id, function=main, count=30)
+    wandb.agent(sweep_id, function=main, count=1)
     wandb.finish()
+
+
 
 #MisconfigurationException("`ModelCheckpoint(monitor='val_acc')` could not find the monitored key in the returned metrics: ['train_loss', 'val_loss', 'epoch', 'step']. HINT: Did you call `log('val_acc', value)` in the `LightningModule`?")
 

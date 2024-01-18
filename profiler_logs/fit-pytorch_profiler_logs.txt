@@ -1,0 +1,27 @@
+FIT Profiler Report
+Profile stats for: records
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  
+                                                   Name    Self CPU %      Self CPU   CPU total %     CPU total  CPU time avg    # of Calls  
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  
+                                          ProfilerStep*         7.94%       3.487ms       100.00%      43.896ms      21.948ms             2  
+                [pl][profile][_EvaluationLoop].val_next         0.78%     343.000us        67.44%      29.605ms      14.803ms             2  
+enumerate(DataLoader)#_MultiProcessingDataLoaderIter...        65.21%      28.624ms        66.66%      29.262ms      14.631ms             2  
+[pl][profile][Strategy]SingleDeviceStrategy.validati...         4.05%       1.776ms        16.39%       7.194ms       3.597ms             2  
+                 [pl][module]__main__.FCNN_model: model         1.78%     780.000us         9.23%       4.053ms       2.026ms             2  
+[pl][profile][Callback]TQDMProgressBar.on_validation...         5.57%       2.444ms         5.57%       2.444ms       1.222ms             2  
+                                           aten::linear         0.14%      60.000us         5.51%       2.418ms     302.250us             8  
+                                            aten::addmm         4.57%       2.006ms         4.99%       2.192ms     274.000us             8  
+[pl][module]torch.nn.modules.linear.Linear: model.fc...         0.37%     161.000us         3.42%       1.500ms     750.000us             2  
+[pl][module]torch.nn.modules.linear.Linear: model.fc...         0.39%     172.000us         1.77%     775.000us     387.500us             2  
+[pl][module]torch.nn.modules.loss.CrossEntropyLoss: ...         0.44%     191.000us         1.54%     674.000us     337.000us             2  
+[pl][profile][Strategy]SingleDeviceStrategy.batch_to...         0.86%     379.000us         1.45%     638.000us     319.000us             2  
+                               aten::cross_entropy_loss         0.13%      56.000us         1.10%     483.000us     241.500us             2  
+[pl][module]torch.nn.modules.linear.Linear: model.fc...         0.30%     132.000us         0.89%     390.000us     195.000us             2  
+[pl][module]torch.nn.modules.linear.Linear: model.fc...         0.34%     151.000us         0.84%     369.000us     184.500us             2  
+                                              aten::sum         0.38%     168.000us         0.70%     307.000us      34.111us             9  
+                                            aten::empty         0.56%     248.000us         0.56%     248.000us       5.636us            44  
+                                             aten::relu         0.18%      81.000us         0.54%     239.000us      39.833us             6  
+[pl][profile][LightningModule]LightningModel.transfe...         0.49%     215.000us         0.49%     217.000us     108.500us             2  
+                                             aten::set_         0.48%     209.000us         0.48%     209.000us       6.531us            32  
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  
+Self CPU time total: 43.896ms
