@@ -17,7 +17,7 @@ from pytorch_lightning.profilers import SimpleProfiler, AdvancedProfiler, PyTorc
 import wandb
 
 """REMEMBER THIS BEFORE PUSHING"""
-cloud_run = False
+cloud_run = True
 """REMEMBER THIS BEFORE PUSHING"""
 
 def sweep_config():
