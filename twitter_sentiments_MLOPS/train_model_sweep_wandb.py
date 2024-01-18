@@ -147,7 +147,7 @@ class LightningDataModule(pl.LightningDataModule):
     def val_dataloader(self):
         return DataLoader(self.val_dataset, batch_size=self.batch_size, shuffle=False, num_workers=6,persistent_workers=True)
 
-def main(cloud_run):
+def main():
     # Check if WANDB_API_KEY is set as an environment variable
     api_key = os.getenv('WANDB_API_KEY')
     # If WANDB_API_KEY is provided, use it to log in
@@ -194,8 +194,6 @@ def main(cloud_run):
     
 
 if __name__ == "__main__":
-
-
     wandb.finish() #Trying to finish any remaining wandb processes before starting a new one.
     sweep_id = sweep_config()
     wandb.agent(sweep_id, function=main, count=2)
