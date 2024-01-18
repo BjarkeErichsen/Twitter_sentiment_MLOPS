@@ -130,26 +130,12 @@ class LightningDataModule(pl.LightningDataModule):
         #self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         # Load data
 
-        def print_all_files_and_folders(start_path):
-            for root, dirs, files in os.walk(start_path):
-                level = root.replace(start_path, '').count(os.sep)
-                indent = ' ' * 4 * level
-                print(f'{indent}{os.path.basename(root)}/')
-                subindent = ' ' * 4 * (level + 1)
-                for f in files:
-                    print(f'{subindent}{f}')
-        print("hey")
-
-        print_all_files_and_folders("/gcs/bucket_processed_data/data/processed")
-        print("hey")
-
-        if cloud_run:
+        try:
             labels_tensor =     torch.load('/gcs/bucket_processed_data/data/processed/labels.pt')
             embeddings_tensor = torch.load('/gcs/bucket_processed_data/data/processed/text_embeddings.pt')
-        else:
+        except: 
             labels_tensor = torch.load("data/processed/labels.pt")#.to(self.device)
             embeddings_tensor = torch.load("data/processed/text_embeddings.pt")#.to(self.device)
-        print("hey")
         # Split dataset
         train_embeddings, val_embeddings, train_labels, val_labels = train_test_split(
             embeddings_tensor, labels_tensor, test_size=0.2, random_state=42
@@ -157,7 +143,6 @@ class LightningDataModule(pl.LightningDataModule):
 
         self.train_dataset = TensorDataset(train_embeddings, train_labels)
         self.val_dataset = TensorDataset(val_embeddings, val_labels)
-        print("hey")
 
 
     def train_dataloader(self):
@@ -184,7 +169,6 @@ def main():
     run_name = wandb.run.name
     wandb_logger = WandbLogger(project="twitter_sentiment_MLOPS", entity="twitter_sentiments_mlops")
     
-    print("hey1")
     if cloud_run:
         checkpoint_path = 'gs://bucket_processed_data/models/FCNN'
     else:
@@ -198,10 +182,8 @@ def main():
         monitor="val_acc",
         mode="max"
     )
-    print("hey2")
 
     model = LightningModel(learning_rate=wandb.config.lr)
-    print("hey3")
 
     data_module = LightningDataModule(batch_size=wandb.config.batch_size)
     if use_profiler:
@@ -210,7 +192,6 @@ def main():
         #profiler = SimpleProfiler(dirpath="profiler_logs", filename="simple_profiler_logs")
     else:
         profiler = None
-    print("hey4")
     accelerator ="gpu" if torch.cuda.is_available() else "cpu"
 
     # Trainer setup
@@ -223,9 +204,7 @@ def main():
         limit_train_batches=1.0,  # Use the entire training dataset per epoch
         limit_val_batches=1.0  # Use the entire validation dataset per epoch
     )
-    print("hey5")
     trainer.fit(model, datamodule=data_module)    
-    print("hey6")
 
 
 if __name__ == "__main__":
