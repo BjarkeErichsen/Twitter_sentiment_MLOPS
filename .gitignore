@@ -12,7 +12,7 @@ data/raw/twitter_validation.csv
 twitter_sentiments_MLOPS/models/FCNN/
 # test cache
 manual_test/
-
+lightning_logs/
 # other local dev info
 .vscode/
 
