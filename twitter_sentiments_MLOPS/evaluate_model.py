@@ -14,6 +14,7 @@ from torch.quantization import quantize_dynamic
 from torch.nn.utils import prune
 import copy
 import torch.utils.benchmark as benchmark
+import time
 
 
 torch.set_float32_matmul_precision('medium')
@@ -108,8 +109,15 @@ def main(model_checkpoint_path, tensor_path, label_path, quantize_datatype, prun
     time_taken.append(time_original)
     print("standard time ", time_original)
 
+    # Start the timer
+    start_time = time.time()
     # Get predictions
     predictions = inference_model(input_tensor)
+    # End the timer
+    end_time = time.time()
+    # Calculate the elapsed time in milliseconds
+    elapsed_time_ms = (end_time - start_time) * 1000
+    print(f"Standard Inference Time: {elapsed_time_ms:.2f} milliseconds")
 
     # Calculate accuracy
     accuracy_percentage = calculate_accuracy(predictions, labels_tensor)
@@ -134,7 +142,17 @@ def main(model_checkpoint_path, tensor_path, label_path, quantize_datatype, prun
     print("Model has been quantized.")
 
     # Run inference using the quantized model
+    # Start the timer
+    start_time = time.time()
+    # Get predictions
     quantized_predictions = quantized_inference_model(input_tensor)
+    # End the timer
+    end_time = time.time()
+    # Calculate the elapsed time in milliseconds
+    elapsed_time_ms = (end_time - start_time) * 1000
+    print(f"Quantized Inference Time: {elapsed_time_ms:.2f} milliseconds")
+
+
 
     # Measure inference time using the quantized model
     timer = benchmark.Timer(
@@ -189,7 +207,15 @@ def main(model_checkpoint_path, tensor_path, label_path, quantize_datatype, prun
     print("time pruned ", time_pruned)
 
     # Run inference using the pruned model
+    # Start the timer
+    start_time = time.time()
+    # Get predictions
     pruned_predictions = pruning_model(input_tensor)
+    # End the timer
+    end_time = time.time()
+    # Calculate the elapsed time in milliseconds
+    elapsed_time_ms = (end_time - start_time) * 1000
+    print(f"pruned Inference Time: {elapsed_time_ms:.2f} milliseconds")
 
     # Calculate accuracy for the pruned model
     pruned_accuracy_percentage = calculate_accuracy(pruned_predictions, labels_tensor)
@@ -227,7 +253,15 @@ def main(model_checkpoint_path, tensor_path, label_path, quantize_datatype, prun
 
     print("time compiled ", time_compiled)
     # Run inference using the compiled model
+        # Start the timer
+    start_time = time.time()
+    # Get predictions
     compiled_predictions = compiled_model(input_tensor)
+    # End the timer
+    end_time = time.time()
+    # Calculate the elapsed time in milliseconds
+    elapsed_time_ms = (end_time - start_time) * 1000
+    print(f"Compiled Inference Time: {elapsed_time_ms:.2f} milliseconds")
 
     # Calculate accuracy for the compiled model
     compiled_accuracy_percentage = calculate_accuracy(compiled_predictions, labels_tensor)
