@@ -234,7 +234,6 @@ def main(model_checkpoint_path, tensor_path, label_path, quantize_datatype, prun
     print(f"Compiled Model Accuracy: {compiled_accuracy_percentage:.2f}%")
     
 
-
     ############################################################     Ploting times    ######################################################
     # Assuming time_taken is a list of Measurement objects from torch.utils.benchmark
     time_taken = [time_original, time_quantized, time_pruned, time_compiled]
