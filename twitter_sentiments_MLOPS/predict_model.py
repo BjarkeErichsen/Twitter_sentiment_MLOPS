@@ -10,8 +10,8 @@ class InferenceModel(pl.LightningModule):
     def __init__(self, model_checkpoint_path):
         super().__init__()
 
-        # Load the trained model checkpoint
-        checkpoint = torch.load(model_checkpoint_path, map_location="cpu")  # Load on CPU
+        checkpoint = torch.load(model_checkpoint_path, map_location="cpu")
+
 
         # Create an instance of your FCNN_model
         self.model = FCNN_model()
