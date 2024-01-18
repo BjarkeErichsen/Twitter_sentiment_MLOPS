@@ -1,27 +1,21 @@
 steps:
-  # Build the container image: Container name is KNNcontainer  
+   # Build the container image: Container name is KNNcontainer  
   - name: 'gcr.io/cloud-builders/docker'
     args: ['build', '-t', 'gcr.io/mlops-tsa/trainmodel-container:latest', '-f', 'dockerfiles/train_model.dockerfile', '.'] 
   # Push the container image to Container Registry
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'gcr.io/mlops-tsa/trainmodel-container:latest']
-  # Deploy container image to Cloud Run
-#  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-#    entrypoint: gcloud
-#    args:
-#    - 'run'
-#    - 'deploy'
-#    - 'trainmodel-service'
-#    - '--image'
-#    - 'gcr.io/mlops-tsa/trainmodel-container:latest'
-#    - '--region'
-#    - 'europe-west1'
 
-  # Second container image
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'gcr.io/mlops-tsa/predict-container:latest', '-f', 'dockerfiles/predict_model.dockerfile', '.'] # Update Dockerfile path if different
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/mlops-tsa/predict-container:latest']
+
+   # Second container image
+#  - name: 'gcr.io/cloud-builders/docker'
+#    args: ['build', '-t', 'gcr.io/mlops-tsa/predict-container:latest', '-f', 'dockerfiles/predict_model.dockerfile', '.'] # Update Dockerfile path if different
+#  - name: 'gcr.io/cloud-builders/docker'
+#    args: ['push', 'gcr.io/mlops-tsa/predict-container:latest']
+
+
+
+
 #  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
 #    entrypoint: gcloud
 #    args:

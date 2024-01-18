@@ -13,11 +13,10 @@ import torch.nn.functional as F
 from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.profilers import SimpleProfiler, AdvancedProfiler, PyTorchProfiler
-
 import wandb
 
 """REMEMBER THIS BEFORE PUSHING"""
-cloud_run = False
+cloud_run = True
 """REMEMBER THIS BEFORE PUSHING"""
 
 def sweep_config():
@@ -130,13 +129,27 @@ class LightningDataModule(pl.LightningDataModule):
     def setup(self, stage: str = None):
         #self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         # Load data
+
+        def print_all_files_and_folders(start_path):
+            for root, dirs, files in os.walk(start_path):
+                level = root.replace(start_path, '').count(os.sep)
+                indent = ' ' * 4 * level
+                print(f'{indent}{os.path.basename(root)}/')
+                subindent = ' ' * 4 * (level + 1)
+                for f in files:
+                    print(f'{subindent}{f}')
+        print("hey")
+
+        print_all_files_and_folders("/gcs/bucket_processed_data/data/processed")
+        print("hey")
+        
         if cloud_run:
             labels_tensor =     torch.load('/gcs/bucket_processed_data/data/processed/labels.pt')
             embeddings_tensor = torch.load('/gcs/bucket_processed_data/data/processed/text_embeddings')
         else:
             labels_tensor = torch.load("data/processed/labels.pt")#.to(self.device)
             embeddings_tensor = torch.load("data/processed/text_embeddings.pt")#.to(self.device)
-
+        print("hey")
         # Split dataset
         train_embeddings, val_embeddings, train_labels, val_labels = train_test_split(
             embeddings_tensor, labels_tensor, test_size=0.2, random_state=42
@@ -144,6 +157,8 @@ class LightningDataModule(pl.LightningDataModule):
 
         self.train_dataset = TensorDataset(train_embeddings, train_labels)
         self.val_dataset = TensorDataset(val_embeddings, val_labels)
+        print("hey")
+
 
     def train_dataloader(self):
         return DataLoader(self.train_dataset, batch_size=self.batch_size, shuffle=True, num_workers=6,persistent_workers=True)
@@ -168,7 +183,8 @@ def main():
     wandb.init()
     run_name = wandb.run.name
     wandb_logger = WandbLogger(project="twitter_sentiment_MLOPS", entity="twitter_sentiments_mlops")
-
+    
+    print("hey1")
     if cloud_run:
         checkpoint_path = 'gs://bucket_processed_data/models/FCNN'
     else:
@@ -182,8 +198,11 @@ def main():
         monitor="val_acc",
         mode="max"
     )
+    print("hey2")
 
     model = LightningModel(learning_rate=wandb.config.lr)
+    print("hey3")
+
     data_module = LightningDataModule(batch_size=wandb.config.batch_size)
     if use_profiler:
         profiler = PyTorchProfiler(dirpath="profiler_logs", filename="pytorch_profiler_logs")
@@ -191,7 +210,7 @@ def main():
         #profiler = SimpleProfiler(dirpath="profiler_logs", filename="simple_profiler_logs")
     else:
         profiler = None
-
+    print("hey4")
     accelerator ="gpu" if torch.cuda.is_available() else "cpu"
 
     # Trainer setup
@@ -204,7 +223,10 @@ def main():
         limit_train_batches=1.0,  # Use the entire training dataset per epoch
         limit_val_batches=1.0  # Use the entire validation dataset per epoch
     )
+    print("hey5")
     trainer.fit(model, datamodule=data_module)    
+    print("hey6")
+
 
 if __name__ == "__main__":
     wandb.finish() #Trying to finish any remaining wandb processes before starting a new one.
