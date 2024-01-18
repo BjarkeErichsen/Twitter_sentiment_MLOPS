@@ -12,29 +12,27 @@ import torch.optim as optim
 import torch.nn.functional as F
 from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning.loggers import WandbLogger
+from pytorch_lightning.profilers import SimpleProfiler, AdvancedProfiler, PyTorchProfiler
+
 import wandb
 
 """REMEMBER THIS BEFORE PUSHING"""
 cloud_run = False
 """REMEMBER THIS BEFORE PUSHING"""
 
-
-
-#Run this at start
 def sweep_config():
     sweep_configuration = {
         "method": "random",
         "name": "sweep",
         "metric": {"goal": "maximize", "name": "val_acc"},
         "parameters": {
+
             #"batch_size": {"values": [96, 128, 192, 256, 384, 512, 640, 768, 896, 1024, 1280, 1536, 1792, 2048, 2304, 2560, 2816, 3072, 3328, 3584, 3840, 4096, 4352, 4608, 4864, 5120]},  # Discrete values
             "batch_size": {"values": [16, 32, 96]},  # Discrete values
             #"epochs": {"min": 10, "max": 100, "distribution": "int_uniform"},  # Integer range
             "epochs": {"min": 3, "max": 4, "distribution": "int_uniform"},
             #"lr": {"values": [0.00001, 0.00003, 0.00005, 0.0001, 0.0003, 0.0005, 0.001, 0.003, 0.005]
-            "lr": {"values": [0.001, 0.003, 0.005, 0.01]
-},  # Log scale for learning rate
-
+            "lr": {"values": [0.001, 0.003, 0.005, 0.01]},  # Log scale for learning rate
         },
     }
 
@@ -54,6 +52,12 @@ class FCNN_model(nn.Module):
         x = F.relu(self.fc2(x))
         x = F.relu(self.fc3(x))
         x = self.fc4(x)
+        return x
+    
+    def get_embed(self, x):
+        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc2(x))
+        x = self.fc3(x)
         return x
 
 class LightningModel(pl.LightningModule):
@@ -148,6 +152,9 @@ class LightningDataModule(pl.LightningDataModule):
         return DataLoader(self.val_dataset, batch_size=self.batch_size, shuffle=False, num_workers=6,persistent_workers=True)
 
 def main():
+    # Initialize wandb
+    use_profiler = False
+
     # Check if WANDB_API_KEY is set as an environment variable
     api_key = os.getenv('WANDB_API_KEY')
     # If WANDB_API_KEY is provided, use it to log in
@@ -157,7 +164,7 @@ def main():
         # Try to use locally stored credentials (wandb will automatically look for it)
         # This will also prompt for login in the terminal if not already logged in
         wandb.login()
-    
+        
     wandb.init()
     run_name = wandb.run.name
     wandb_logger = WandbLogger(project="twitter_sentiment_MLOPS", entity="twitter_sentiments_mlops")
@@ -178,26 +185,29 @@ def main():
 
     model = LightningModel(learning_rate=wandb.config.lr)
     data_module = LightningDataModule(batch_size=wandb.config.batch_size)
+    if use_profiler:
+        profiler = PyTorchProfiler(dirpath="profiler_logs", filename="pytorch_profiler_logs")
+        #profiler = AdvancedProfiler(dirpath="profiler_logs", filename="advanced_profiler_logs")
+        #profiler = SimpleProfiler(dirpath="profiler_logs", filename="simple_profiler_logs")
+    else:
+        profiler = None
+
     accelerator ="gpu" if torch.cuda.is_available() else "cpu"
 
     # Trainer setup
     trainer = pl.Trainer(
         max_epochs=wandb.config.epochs,
         accelerator=accelerator,
+        profiler=profiler,
         logger=wandb_logger,
         callbacks=[checkpoint_callback],
         limit_train_batches=1.0,  # Use the entire training dataset per epoch
         limit_val_batches=1.0  # Use the entire validation dataset per epoch
     )
-    trainer.fit(model, datamodule=data_module)
-
-    
+    trainer.fit(model, datamodule=data_module)    
 
 if __name__ == "__main__":
     wandb.finish() #Trying to finish any remaining wandb processes before starting a new one.
     sweep_id = sweep_config()
-    wandb.agent(sweep_id, function=main, count=2)
+    wandb.agent(sweep_id, function=main, count=1)
     wandb.finish()
-
-
-#MisconfigurationException("`ModelCheckpoint(monitor='val_acc')` could not find the monitored key in the returned metrics: ['train_loss', 'val_loss', 'epoch', 'step']. HINT: Did you call `log('val_acc', value)` in the `LightningModule`?")
