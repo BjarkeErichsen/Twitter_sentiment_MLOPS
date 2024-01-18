@@ -10,4 +10,4 @@ workerPoolSpecs:
         imageUri: gcr.io/mlops-tsa/trainmodel-container:latest
         env:
           - name: WANDB_API_KEY
-            value: "53f0dc72994bd6a212188450ee732346f2bffdac"
+            value: ""
