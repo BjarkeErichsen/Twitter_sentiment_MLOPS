@@ -3,3 +3,7 @@ outs:
   size: 3070173
   hash: md5
   path: text_embeddings_test.pt
+  cloud:
+    remote_storage:
+      etag: 089dc3e2fb80e783031001
+      version_id: '1705583312413085'
