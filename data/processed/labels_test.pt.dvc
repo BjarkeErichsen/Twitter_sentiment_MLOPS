@@ -1,0 +1,5 @@
+outs:
+- md5: 38ad0e72ffa273cea079282fb22ba871
+  size: 17136
+  hash: md5
+  path: labels_test.pt
