@@ -7,11 +7,11 @@ RUN apt update && \
 
 COPY requirements.txt requirements.txt
 COPY pyproject.toml pyproject.toml
-COPY twitter_sentiment_MLOPS/ twitter_sentiment_MLOPS/
-COPY data/ data/
+COPY twitter_sentiments_MLOPS twitter_sentiments_MLOPS
 
 WORKDIR /
 RUN pip install -r requirements.txt --no-cache-dir
 RUN pip install . --no-deps --no-cache-dir
 
-ENTRYPOINT ["python", "-u", "twitter_sentiment_MLOPS/predict_model.py"]
+CMD ["uvicorn", "twitter_sentiments_MLOPS.api:app", "--host", "0.0.0.0", "--port", "80"]
+#uvicorn --reload --port 8000 twitter_sentiments_MLOPS.api:app
