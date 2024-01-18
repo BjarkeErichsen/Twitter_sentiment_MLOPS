@@ -142,10 +142,10 @@ class LightningDataModule(pl.LightningDataModule):
 
         print_all_files_and_folders("/gcs/bucket_processed_data/data/processed")
         print("hey")
-        
+
         if cloud_run:
             labels_tensor =     torch.load('/gcs/bucket_processed_data/data/processed/labels.pt')
-            embeddings_tensor = torch.load('/gcs/bucket_processed_data/data/processed/text_embeddings')
+            embeddings_tensor = torch.load('/gcs/bucket_processed_data/data/processed/text_embeddings.pt')
         else:
             labels_tensor = torch.load("data/processed/labels.pt")#.to(self.device)
             embeddings_tensor = torch.load("data/processed/text_embeddings.pt")#.to(self.device)

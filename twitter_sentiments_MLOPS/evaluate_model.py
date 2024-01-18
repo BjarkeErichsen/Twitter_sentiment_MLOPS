@@ -13,6 +13,8 @@ from google.cloud import storage
 from torch.quantization import quantize_dynamic
 from torch.nn.utils import prune
 import copy
+import torch.utils.benchmark as benchmark
+
 
 torch.set_float32_matmul_precision('medium')
 def quantize_model(model, quantize_datatype):
@@ -85,12 +87,26 @@ def main(model_checkpoint_path, tensor_path, label_path, quantize_datatype, prun
         # Use the local file path for further processing
         model_checkpoint_path = local_model_path
 
+    time_taken = []
+
     #################  Regular model     ##################################
     inference_model = InferenceModel(model_checkpoint_path)
 
     # Load your .pt files
     input_tensor = torch.load(tensor_path)
     labels_tensor = torch.load(label_path)
+
+    timer = benchmark.Timer(
+        stmt='inference_model(input_tensor)',
+        globals={'inference_model': inference_model, 'input_tensor': input_tensor},
+        num_threads=torch.get_num_threads(),
+        label="Inference Benchmark",
+        sub_label="Original Model",
+        description="Test on provided data",
+    )
+    time_original = timer.blocked_autorange(min_run_time=1)
+    time_taken.append(time_original)
+    print("standard time ", time_original)
 
     # Get predictions
     predictions = inference_model(input_tensor)
@@ -120,6 +136,20 @@ def main(model_checkpoint_path, tensor_path, label_path, quantize_datatype, prun
     # Run inference using the quantized model
     quantized_predictions = quantized_inference_model(input_tensor)
 
+    # Measure inference time using the quantized model
+    timer = benchmark.Timer(
+        stmt='quantized_inference_model(input_tensor)',
+        globals={'quantized_inference_model': quantized_inference_model, 'input_tensor': input_tensor},
+        num_threads=torch.get_num_threads(),
+        label="Inference Benchmark",
+        sub_label="Quantized Model",
+        description="Test on provided data",
+    )
+    time_quantized = timer.blocked_autorange(min_run_time=1)
+    time_taken.append(time_quantized)
+
+    print("time quantized ", time_quantized)
+
     # Calculate accuracy for the quantized model
     quantized_accuracy_percentage = calculate_accuracy(quantized_predictions, labels_tensor)
     print(f"Quantized Model Accuracy: {quantized_accuracy_percentage:.2f}%")
@@ -144,6 +174,20 @@ def main(model_checkpoint_path, tensor_path, label_path, quantize_datatype, prun
 
     print("Model has been pruned.")
 
+
+    # Measure inference time using the pruned model
+    timer = benchmark.Timer(
+        stmt='pruning_model(input_tensor)',
+        globals={'pruning_model': pruning_model, 'input_tensor': input_tensor},
+        num_threads=torch.get_num_threads(),
+        label="Inference Benchmark",
+        sub_label="Pruned Model",
+        description="Test on provided data",
+    )
+    time_pruned = timer.blocked_autorange(min_run_time=1)
+    time_taken.append(time_pruned)
+    print("time pruned ", time_pruned)
+
     # Run inference using the pruned model
     pruned_predictions = pruning_model(input_tensor)
 
@@ -163,9 +207,52 @@ def main(model_checkpoint_path, tensor_path, label_path, quantize_datatype, prun
 
 
     ################ Compilation            #######################
+    #we dont create confusian matrix for compiled model
+
+    # Compile the model using TorchScript
+    compiled_model = torch.jit.script(inference_model.model)
+    print("Model has been compiled.")
+
+    # Measure inference time using the compiled model
+    timer = benchmark.Timer(
+        stmt='compiled_model(input_tensor)',
+        globals={'compiled_model': compiled_model, 'input_tensor': input_tensor},
+        num_threads=torch.get_num_threads(),
+        label="Inference Benchmark",
+        sub_label="Compiled Model",
+        description="Test on provided data",
+    )
+    time_compiled = timer.blocked_autorange(min_run_time=1)
+    time_taken.append(time_pruned)
+
+    print("time compiled ", time_compiled)
+    # Run inference using the compiled model
+    compiled_predictions = compiled_model(input_tensor)
+
+    # Calculate accuracy for the compiled model
+    compiled_accuracy_percentage = calculate_accuracy(compiled_predictions, labels_tensor)
+    print(f"Compiled Model Accuracy: {compiled_accuracy_percentage:.2f}%")
+    
 
 
+    ############################################################     Ploting times    ######################################################
+    # Assuming time_taken is a list of Measurement objects from torch.utils.benchmark
+    time_taken = [time_original, time_quantized, time_pruned, time_compiled]
 
+    # Extract mean times and model names
+    mean_times = [t.mean for t in time_taken]
+    model_names = ['Original', 'Quantized', 'Pruned', 'Compiled']
+
+    # Plotting
+    plt.figure(figsize=(10, 6))
+    plt.bar(model_names, mean_times, color='skyblue')
+    plt.xlabel('Model Type')
+    plt.ylabel('Mean Inference Time (seconds)')
+    plt.title('Mean Inference Time for Different Models')
+    plt.xticks(rotation=45)
+    plt.grid(axis='y', linestyle='--', alpha=0.7)
+    plt.tight_layout()
+    plt.show()
 
 if __name__ == "__main__":
 
