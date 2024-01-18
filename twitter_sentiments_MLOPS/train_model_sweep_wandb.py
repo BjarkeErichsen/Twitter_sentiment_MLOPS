@@ -190,7 +190,7 @@ def main():
 if __name__ == "__main__":
 
     """REMEMBER THIS BEFORE PUSHING"""
-    cloud_run = True
+    cloud_run = False
     """REMEMBER THIS BEFORE PUSHING"""
 
     wandb.finish() #Trying to finish any remaining wandb processes before starting a new one.
