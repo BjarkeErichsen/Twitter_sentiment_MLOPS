@@ -150,10 +150,10 @@ end of the project.
 
 --- OBS> tjek kommando for docker
 We used conda, pipreqs, docker, and git to manage our dependencies. The list of dependencies was auto-generated using pipregs where the dependencies exclusevly for development is in requirements_dev.txt and to run the project you would need the dependencies from requirements.txt. So to run the project you would need build the docker image and run that container:
-**docker build -f Docker.dockerfile . -t trainer:latest.**
+'docker build -f Docker.dockerfile . -t trainer:latest.'
 
 As a new team member you would need to be added as collaborator in Github, clone the repository and run the following commands in their conda environment:
-**pip install -r requirements.txt**, **pip install -r requirements.txt** **pip install -e .**
+'pip install -r requirements.txt', 'pip install -r requirements.txt' 'pip install -e .'
  where '-e .' is to install local packages in the repository---
 
 ### Question 5
@@ -274,7 +274,10 @@ DVC is useful for managing data in projects where multiple team members are work
 >
 > Answer:
 
---- question 11 fill here ---
+--- Unit tests were implemented for all training data and for the train model pipeline. In total, 5 unit tests are executed automatically when pushing to Git. This is done by having the appropriate workflow file. GitHub has access to the data when executing the unit tests. The data is located in cloud storage buckets where a service account has been set up so that GitHub can pull the data using DVC when running the tests. Additionally, the workflow generates a coverage report which is saved as an artifact. Docker images are built on GCloud when pushed to the development branch, as determined by a cloudbuild.yaml and trigger located in Cloud Build. These Docker images pertain to training the model and the model inference API. Additionally, we have built another Dockerfile and pipeline. These images are pushed to the container registry under different folders. They are also tagged with "latest" such that when running other applications, it is always the newest image.  
+
+
+We have not used any pre-commit hooks, although we have used Ruff for manually linting files. We only used the latest Ubuntu operating system when running the unit tests. We also do not make use of cache, and only use python 3.10. The link to the workflow file is included here https://github.com/AdrianValentin/Twitter_sentiment_MLOPS/blob/dev/.github/workflows/test.yml.---
 
 ## Running code and tracking experiments
 
@@ -293,8 +296,9 @@ DVC is useful for managing data in projects where multiple team members are work
 >
 > Answer:
 
---- We used WandB's sweep configuration function. We defined ranges for the different hyperparamters, and then using both grid and random search these ranges would be used in different runs. From root directory we would call the function with the defined parameters sweep:
-**python twitter_sentiments_MLOPS/train_model_sweep_wandb.py **
+--- We used WandB's sweep configuration function to sweep for the optimal hyper parameters. We defined ranges for the different hyperparamters, and then using both grid and random search these ranges would be used in different runs. From root directory we would call the function with the defined parameters sweep:
+'python twitter_sentiments_MLOPS/train_model_sweep_wandb.py'
+Then you would need to head over to the project's WandB project to examine the results more deeply or look in the terminal for a brief understanding of the results.
  ---
 
 ### Question 13
@@ -310,7 +314,9 @@ DVC is useful for managing data in projects where multiple team members are work
 >
 > Answer:
 
---- We made use of WandB's configuration function and with uniform distribution between the chosen hyperparameters test. Whenever an experiment is run the models performance is then logged in WandB and we could find the optimal model here and choose the right combination of hyperparameters for the best performance. One would have to  ---
+--- We made use of WandB's configuration function and with randomly selected values between the chosen hyperparameters that we would like to experiment with. Whenever an experiment is run the models performance is then logged into WandB and we could find the optimal model here and choose the right combination of hyperparameters for the best performance. Furthermore a seed was used in datasplitting. 
+To reproduce one of the runs, specific values should be put in the sweep config, and the same seed (42) should be used. Then lastly you would need to run the script from root dir. by:
+'python twitter_sentiments_MLOPS/train_model_sweep_wandb.py' ---
 
 ### Question 14
 
@@ -327,7 +333,13 @@ DVC is useful for managing data in projects where multiple team members are work
 >
 > Answer:
 
---- question 14 fill here ---
+---In our project, we have chosen WandB for tracking experiments, a decision that has significantly aided in understanding and optimizing our model's performance. The included figure, referred to as  ![This figure](figures/wandb_sweep.png), presents several graphs, each offering valuable insights.
+
+The first graph in the figure demonstrates the relationship between batch size, and both training and validation accuracies. It's a key visual tool showing how batch size impacts model performance, revealing an interesting trend: smaller batch sizes are generally associated with higher accuracies in both training and validation phases. This information is crucial for us, as it guides the optimization of batch sizes to enhance overall model accuracy.
+
+The second graph delves into the interactions among various hyperparameters – epochs, learning rate, and batch size – and their effects on validation accuracy. This visualization is important for identifying the most effective combination of hyperparameters, leading us towards the optimal configuration for our model. It helps in understanding the complex interplay of these variables and their influence on model performance.
+
+Furthermore, the final plot in the figure examines the correlation between these hyperparameters and validation accuracy, highlighting a notable finding: a higher number of epochs shows a strong correlation with increased accuracy rates. This insight is significant, as it emphasizes the importance of epochs in the model's learning process, suggesting that increasing epochs could be key to improving accuracy. ---
 
 ### Question 15
 
@@ -342,7 +354,9 @@ DVC is useful for managing data in projects where multiple team members are work
 >
 > Answer:
 
---- question 15 fill here ---
+--- For our project we developed several images: one for training our neural network model called FCNN, one for our baseline model using KNN and one for doing prediction containing our FastAPI function to do the inference. For example to run the predict docker image, it must first be built using the console command: 
+'docker build -f 'dockerfiles/predict_model.dockerfile' -t twitter-sentiment-app .',
+and then ran with: 'docker run -it --rm -p 80:80 twitter-sentiment-app'. Both commands should be used from root directory. Going to http://127.0.0.1:80/docs will provide an inference tool, where it is possible to add a tweet and get a sentiment analysis. <https://github.com/AdrianValentin/Twitter_sentiment_MLOPS/blob/dev/dockerfiles/predict_model.dockerfile> ---
 
 ### Question 16
 
@@ -357,7 +371,7 @@ DVC is useful for managing data in projects where multiple team members are work
 >
 > Answer:
 
---- question 16 fill here ---
+-- We debugged primarily with the inbuilt debugging tool in pycharm and vs-code. This was sufficient for most of the project. However, when wandb and fastapi was involved, this was harder to do - so we confined to also using a few print statements, which led us to now where the error was and what different variables contained. We used pytorch lightning profilling with the package profilers on the code, and created reports on this. From this we learned, that most of the training time was spend during the optimizer step and next the training step. We could also use profiling for understanding how much cpu or gpu was used for the different functions.  ---
 
 ## Working in the cloud
 
@@ -374,7 +388,7 @@ DVC is useful for managing data in projects where multiple team members are work
 >
 > Answer:
 
---- question 17 fill here ---
+--- We used: Container Registry for storing the docker containers we used. Vertex AI for training our models. Cloud build for building docker images. Cloud storage for storing trained models (weights + bias) and data (embeddings and labels) and easily access the data through DVC. Cloud run is used for deploying and scaling our containerized application quickly and efficiently. ---
 
 ### Question 18
 
@@ -389,7 +403,7 @@ DVC is useful for managing data in projects where multiple team members are work
 >
 > Answer:
 
---- question 18 fill here ---
+--- The Compute Engine was only used indirectly for training on Vertex AI. We utilized only a CPU since GCloud had capped the number of GPUs available in europe-west1 to 0 for our use. The VM employed the n1-standard-8 machine type. All VM usage was in conjunction with running Docker images. Specifically, the train model image is executed inside Vertex AI, and a model is exported to a Cloud Storage bucket. A major challenge was enabling Vertex AI to interact with Weights & Biases (wandb). This issue was resolved by including the wandb key in the environment variables. The training job was initiated using the gcloud custom job command and a configuration file containing the necessary details. ---
 
 ### Question 19
 
@@ -398,7 +412,7 @@ DVC is useful for managing data in projects where multiple team members are work
 >
 > Answer:
 
---- question 19 fill here ---
+--- ![this figure](figures/ourbucket.png)---
 
 ### Question 20
 
@@ -407,7 +421,7 @@ DVC is useful for managing data in projects where multiple team members are work
 >
 > Answer:
 
---- question 20 fill here ---
+--- ![this figure](figures/ourregistry.png) ---
 
 ### Question 21
 
@@ -416,7 +430,7 @@ DVC is useful for managing data in projects where multiple team members are work
 >
 > Answer:
 
---- question 21 fill here ---
+--- ![this figure](figures/ourbuild.png) ---
 
 ### Question 22
 
@@ -432,7 +446,7 @@ DVC is useful for managing data in projects where multiple team members are work
 >
 > Answer:
 
---- question 22 fill here ---
+--- August ---
 
 ### Question 23
 
@@ -447,7 +461,9 @@ DVC is useful for managing data in projects where multiple team members are work
 >
 > Answer:
 
---- question 23 fill here ---
+--- We managed to setup data drifting using Evidently to check if the distribution of new test data to understand if the data distribution did change. This can help us understand if we should update the data and train our model using the new data. Further telemetry monitoring was not implemented directly, but we kept an eye on google cloud to check for billing usage, so we knew if we were using too much money. 
+
+By monitoring our model in these ways, we were able to ensure that the application will work for in the future. By catching and fixing changes early on, we were able to prevent them from causing more issues down the line.---
 
 ### Question 24
 
@@ -461,7 +477,7 @@ DVC is useful for managing data in projects where multiple team members are work
 >
 > Answer:
 
---- question 24 fill here ---
+--- s201390 used 0 dollars on the project(due to spending all the credits on gpu in the exercises), s204129 used 0 dollars on the project(due to spending all the credits on gpu in the exercises), s204104 used 4 dollars on the project, in total 4 dollars was spend during development. The service costing the most was cpu power due to running the containers ---
 
 ## Overall discussion of project
 
@@ -482,7 +498,16 @@ DVC is useful for managing data in projects where multiple team members are work
 >
 > Answer:
 
---- question 25 fill here ---
+--- ![Our overview figure](figures/ouroverview.png)
+
+The depicted workflow starts with developers running and testing machine learning experiments locally, utilizing WandB for tracking. This tool assists in determining the best model parameters through sweeps. Once the optimal model is identified, it's deployed to the Google Cloud AI Platform, making it accessible via FastAPI, which provides a way for users to interact with the model.
+
+As developers commit and push code to GitHub, GitHub Actions are triggered to automate the testing and Docker image building processes. This ensures that all code passes tests before an image is constructed. The created Docker image, encapsulating the latest application version, is then stored in a container registry at google cloud.
+
+Users can interact with the system in several ways: they can query the server to use the model, clone the source code from GitHub for personal use, or pull the latest Docker image to obtain the most current and stable application version.
+
+This pipeline illustrates a process for machine learning development, leveraging cloud services and containerization. It ensures that the model is not only thoroughly tested but also readily available for deployment and use, facilitating an efficient and user-friendly experience and a structure that other people can continue the work of. 
+ ---
 
 ### Question 26
 
@@ -496,7 +521,15 @@ DVC is useful for managing data in projects where multiple team members are work
 >
 > Answer:
 
---- question 26 fill here ---
+--- 
+In this project, a significant portion of our work involved parallelization, with each group member tackling diverse challenges. A recurring issue was pathing problems, often linked to wandb configurations. These issues became particularly pronounced when running scripts under different environments, such as locally, through an API, or via cloud run. The primary difficulty lay in navigating path issues related to data access. Compounding this challenge was the complexity of wandb logs, which are notoriously difficult to decipher and navigate.
+
+Additionally, our initial Dockerfile organization led to inefficient build times. The Docker images were cumbersome to construct due to the large size of the required packages, approximately 5GB. This size issue was exacerbated by our initial failure to leverage Docker's layering capabilities, leading to unnecessary reloading of these packages with each build. This inefficiency not only slowed down the development process but also made debugging more tedious in the later stages of the project.
+
+Also we spend a lot of time answering the rapport, but it did provide reflections.
+
+Overall, the project was a valuable learning experience, providing insights into the importance of efficient project setup and the challenges of working with advanced data and software tools in a team environment.
+---
 
 ### Question 27
 
@@ -506,11 +539,15 @@ DVC is useful for managing data in projects where multiple team members are work
 > Answer length: 50-200 words.
 >
 > Example:
-> *Student sXXXXXX was in charge of developing of setting up the initial cookie cutter project and developing of the*
+> *Student sXXXXXX was in charge of developing of setting up the initial cookie cutter project*
 > *docker containers for training our applications.*
 > *Student sXXXXXX was in charge of training our models in the cloud and deploying them afterwards.*
 > *All members contributed to code by...*
 >
 > Answer:
 
---- question 27 fill here ---
+--- Student s201390 was in charge of developing of setting up the initial cookie cutter project, setting up training loop, hydra, setup profiling, logging and sweeping and setting up data drifting 
+
+Student s204129 was in charge of testing the code, create the model, implement pytorch lightning and our FastAPI app.
+
+Student s204104 was in charge of implementing DVC in GCP, constructing docker files, and implementing cloud run, vertex ai. ---
