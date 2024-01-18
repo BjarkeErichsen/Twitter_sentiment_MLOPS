@@ -14,6 +14,12 @@ from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning.loggers import WandbLogger
 import wandb
 
+"""REMEMBER THIS BEFORE PUSHING"""
+cloud_run = False
+"""REMEMBER THIS BEFORE PUSHING"""
+
+
+
 #Run this at start
 def sweep_config():
     sweep_configuration = {
@@ -141,7 +147,7 @@ class LightningDataModule(pl.LightningDataModule):
     def val_dataloader(self):
         return DataLoader(self.val_dataset, batch_size=self.batch_size, shuffle=False, num_workers=6,persistent_workers=True)
 
-def main():
+def main(cloud_run):
     # Check if WANDB_API_KEY is set as an environment variable
     api_key = os.getenv('WANDB_API_KEY')
     # If WANDB_API_KEY is provided, use it to log in
@@ -189,9 +195,6 @@ def main():
 
 if __name__ == "__main__":
 
-    """REMEMBER THIS BEFORE PUSHING"""
-    cloud_run = False
-    """REMEMBER THIS BEFORE PUSHING"""
 
     wandb.finish() #Trying to finish any remaining wandb processes before starting a new one.
     sweep_id = sweep_config()
