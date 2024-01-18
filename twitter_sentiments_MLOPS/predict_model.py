@@ -31,7 +31,7 @@ class InferenceModel(pl.LightningModule):
         self.embedder = AutoModel.from_pretrained("cardiffnlp/twitter-roberta-base-sentiment-latest")
 
         # Label mapping
-        self.label_mapping = {0: "positive", 1: "negative", 2: "neutral", 3: "irrelevant"}
+        self.label_mapping = {0: "irrelivant", 1: "negative", 2: "neutral", 3: "positive"}
 
     def forward(self, x):
         # Forward pass through the model

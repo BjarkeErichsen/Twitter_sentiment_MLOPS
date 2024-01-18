@@ -13,7 +13,6 @@ import torch.nn.functional as F
 from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning.loggers import WandbLogger
 from pytorch_lightning.profilers import SimpleProfiler, AdvancedProfiler, PyTorchProfiler
-
 import wandb
 
 """REMEMBER THIS BEFORE PUSHING"""
@@ -168,7 +167,8 @@ def main():
     wandb.init()
     run_name = wandb.run.name
     wandb_logger = WandbLogger(project="twitter_sentiment_MLOPS", entity="twitter_sentiments_mlops")
-
+    
+    print("hey1")
     if cloud_run:
         checkpoint_path = 'gs://bucket_processed_data/models/FCNN'
     else:
@@ -182,8 +182,11 @@ def main():
         monitor="val_acc",
         mode="max"
     )
+    print("hey2")
 
     model = LightningModel(learning_rate=wandb.config.lr)
+    print("hey3")
+
     data_module = LightningDataModule(batch_size=wandb.config.batch_size)
     if use_profiler:
         profiler = PyTorchProfiler(dirpath="profiler_logs", filename="pytorch_profiler_logs")
@@ -191,7 +194,7 @@ def main():
         #profiler = SimpleProfiler(dirpath="profiler_logs", filename="simple_profiler_logs")
     else:
         profiler = None
-
+    print("hey4")
     accelerator ="gpu" if torch.cuda.is_available() else "cpu"
 
     # Trainer setup
@@ -204,8 +207,9 @@ def main():
         limit_train_batches=1.0,  # Use the entire training dataset per epoch
         limit_val_batches=1.0  # Use the entire validation dataset per epoch
     )
+    print("hey5")
     trainer.fit(model, datamodule=data_module)    
-
+    print("hey6")
 if __name__ == "__main__":
     wandb.finish() #Trying to finish any remaining wandb processes before starting a new one.
     sweep_id = sweep_config()
