@@ -446,7 +446,9 @@ and then ran with: 'docker run -it --rm -p 80:80 twitter-sentiment-app'. Both co
 >
 > Answer:
 
---- August ---
+--- Yes, we successfully deployed our model in the cloud, leveraging Google Cloud Run. After training the model locally, we encapsulated it within a Docker image, which includes both the API and prediction scripts, as demonstrated in the provided code snippets. This Docker image was then deployed using Google Cloud Run, a fully managed platform that automates the deployment of containerized applications. This approach offers scalability and ease of maintenance.
+
+To invoke our deployed service, users send a POST request to the FastAPI server's /predict/ endpoint, which is hosted on Google Cloud Run. The request includes the tweet text in JSON format. The server processes this request using the predict_tweet function, which employs our pre-trained sentiment analysis model to predict the sentiment of the tweet. The server then responds with the prediction result. This setup provides a seamless and efficient way for users to access our machine learning model via a simple HTTP request, regardless of their location or the infrastructure they have. ---
 
 ### Question 23
 
