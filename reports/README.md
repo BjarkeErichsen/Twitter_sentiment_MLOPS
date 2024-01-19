@@ -175,8 +175,7 @@ From the cookiecutter template we have filled out the data folder to store our d
 
 We removed the folder notebooks since we never used any notebooks. 
 
-We added the folders logs, to add the logs for WandB, profiling and lightning. 
-  ---
+We added the folders logs, to add the logs for WandB, profiling and lightning. ---
 
 ### Question 6
 
