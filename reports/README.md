@@ -505,8 +505,7 @@ As developers commit and push code to GitHub, GitHub Actions are triggered to au
 
 Users can interact with the system in several ways: they can query the server to use the model, clone the source code from GitHub for personal use, or pull the latest Docker image to obtain the most current and stable application version.
 
-This pipeline illustrates a process for machine learning development, leveraging cloud services and containerization. It ensures that the model is not only thoroughly tested but also readily available for deployment and use, facilitating an efficient and user-friendly experience and a structure that other people can continue the work of. 
- ---
+This pipeline illustrates a process for machine learning development, leveraging cloud services and containerization. It ensures that the model is not only thoroughly tested but also readily available for deployment and use, facilitating an efficient and user-friendly experience and a structure that other people can continue the work of. ---
 
 ### Question 26
 
@@ -527,8 +526,7 @@ Additionally, our initial Dockerfile organization led to inefficient build times
 
 Also we spend a lot of time answering the rapport, but it did provide reflections.
 
-Overall, the project was a valuable learning experience, providing insights into the importance of efficient project setup and the challenges of working with advanced data and software tools in a team environment.
----
+Overall, the project was a valuable learning experience, providing insights into the importance of efficient project setup and the challenges of working with advanced data and software tools in a team environment.---
 
 ### Question 27
 
