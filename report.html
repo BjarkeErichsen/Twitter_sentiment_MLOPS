@@ -1,0 +1,65 @@
+<p>roject is to develop a sentiment analysis system for classifying tweets into 'positive', 'neutral', 'negative', or 'non-applicable' categories. This tool is designed to delve into the realm of public opinion, capturing a wide spectrum of emotions and viewpoints expressed on Twitter. The importance of this project lies in its potential application across various sectors, including market research, political analysis, and social media monitoring, providing a nuanced understanding of public sentiment on diverse topics.</p>
+<p>Frameworks and Integration: To achieve this, we will leverage the advanced capabilities of Hugging Face's transformer models, renowned for their superior performance in natural language processing tasks. These models, such as BERT and GPT, have demonstrated exceptional proficiency in understanding and interpreting the complexities of human language, which is crucial for accurate sentiment analysis.</p>
+<p>Alongside Hugging Face, the project will utilise PyTorch and PyTorch Lightning for the neural network development. PyTorch offers an interactive and highly flexible platform for deep learning models, while PyTorch Lightning simplifies the coding process, allowing for more efficient model development and easier scalability. Here we will aim to optimise hyperparameters potentially using monitoring software such as wandb.ai.</p>
+<p>Data Utilisation: Initially, the project will train the model using the "Twitter Entity Sentiment Analysis" dataset from Kaggle:
+https://www.kaggle.com/datasets/jp797498e/twitter-entity-sentiment-analysis 
+This dataset provides a collection of labelled tweets, offering a solid foundation for training a sentiment analysis model. To enhance the model's accuracy and adaptability, we plan to continuously incorporate new tweets/posts into the training process, ensuring the model remains up-to-date with the evolving language and expressions on Twitter/X.</p>
+<p>Expected Models and Approach: The project will start by exploring various transformer-based models from Hugging Face, focusing on those particularly adept at contextual and emotional nuances in text. After selecting the most suitable transformer model for embedding generation, we will design a custom neural network using PyTorch. This network will specialise in detecting and interpreting sentiment-related patterns within the embeddings.</p>
+<p>The final goal is to create a scalable, and adaptable model that can classify tweet sentiments effectively, even as it encounters new data and evolving language patterns. We aim to bridge the gap between advanced NLP technology and practical applications in sentiment analysis, creating a powerful tool for understanding the emotional undercurrents of social media discourse.</p>
+<h1>project_name</h1>
+<p>Analysing Tweets sentiments using machine learning and with optimal MLOPS</p>
+<h2>Project structure</h2>
+<p>The directory structure of the project looks like this:</p>
+<p>```txt</p>
+<p>├── Makefile             &lt;- Makefile with convenience commands like <code>make data</code> or <code>make train</code>
+├── README.md            &lt;- The top-level README for developers using this project.
+├── data
+│   ├── processed        &lt;- The final, canonical data sets for modeling.
+│   └── raw              &lt;- The original, immutable data dump.
+│
+├── docs                 &lt;- Documentation folder
+│   │
+│   ├── index.md         &lt;- Homepage for your documentation
+│   │
+│   ├── mkdocs.yml       &lt;- Configuration file for mkdocs
+│   │
+│   └── source/          &lt;- Source directory for documentation files
+│
+├── models               &lt;- Trained and serialized models, model predictions, or model summaries
+│
+├── notebooks            &lt;- Jupyter notebooks.
+│
+├── pyproject.toml       &lt;- Project configuration file
+│
+├── reports              &lt;- Generated analysis as HTML, PDF, LaTeX, etc.
+│   └── figures          &lt;- Generated graphics and figures to be used in reporting
+│
+├── requirements.txt     &lt;- The requirements file for reproducing the analysis environment
+|
+├── requirements_dev.txt &lt;- The requirements file for reproducing the analysis environment
+│
+├── tests                &lt;- Test files
+│
+├── project_name  &lt;- Source code for use in this project.
+│   │
+│   ├── <strong>init</strong>.py      &lt;- Makes folder a Python module
+│   │
+│   ├── data             &lt;- Scripts to download or generate data
+│   │   ├── <strong>init</strong>.py
+│   │   └── make_dataset.py
+│   │
+│   ├── models           &lt;- model implementations, training script and prediction script
+│   │   ├── <strong>init</strong>.py
+│   │   ├── model.py
+│   │
+│   ├── visualization    &lt;- Scripts to create exploratory and results oriented visualizations
+│   │   ├── <strong>init</strong>.py
+│   │   └── visualize.py
+│   ├── train_model.py   &lt;- script for training the model
+│   └── predict_model.py &lt;- script for predicting from a model
+│
+└── LICENSE              &lt;- Open-source license if one is chosen
+```</p>
+<p>Created using <a href="https://github.com/SkafteNicki/mlops_template">mlops_template</a>,
+a <a href="https://github.com/cookiecutter/cookiecutter">cookiecutter template</a> for getting
+started with Machine Learning Operations (MLOps).</p>

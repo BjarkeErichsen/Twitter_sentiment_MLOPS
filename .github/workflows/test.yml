@@ -27,11 +27,18 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install -r requirements_tests.txt
-#    - uses: iterative/setup-dvc@v1 #get the data
+    - uses: iterative/setup-dvc@v1 # get the data
     - name: get data
       run: |
         dvc pull
     
     - name: Test with pytest
-      run: |   #coverage run -m pytest tests/
-        pytest -v    
+      run: |
+        coverage run -m pytest tests/
+        coverage html
+    
+    - name: Upload coverage report
+      uses: actions/upload-artifact@v2
+      with:
+        name: coverage-report
+        path: htmlcov/

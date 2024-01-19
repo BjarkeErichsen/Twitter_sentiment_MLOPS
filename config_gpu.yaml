@@ -1,0 +1,13 @@
+# config_cpu.yaml  #used when calling batch training for vertex ai
+# use this file ONLY LOCALLY:    call  gcloud custom jobs create ...
+workerPoolSpecs:
+    machineSpec:
+        machineType: n1-standard-8
+        #acceleratorType: NVIDIA_TESLA_T4                    #activate these for gpu
+        #acceleratorCount: 1                                #activate thse for gpu
+    replicaCount: 1
+    containerSpec:
+        imageUri: gcr.io/mlops-tsa/trainmodel-container:latest
+        env:
+          - name: WANDB_API_KEY
+            value: ""

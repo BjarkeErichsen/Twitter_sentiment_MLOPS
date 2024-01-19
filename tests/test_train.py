@@ -59,3 +59,6 @@ def test_single_training_step():
     # Check if loss is a tensor and is not NaN or Inf
     assert isinstance(loss, torch.Tensor), "Loss is not a tensor"
     assert torch.isfinite(loss).all(), "Loss is NaN or Inf"
+
+#coverage run -m pytestcoverage report
+#coverage report

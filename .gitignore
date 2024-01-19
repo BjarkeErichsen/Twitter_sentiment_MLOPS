@@ -5,14 +5,16 @@ wandb/
 *.png
 *.jpg
 
+twitter_sentiments_MLOPS\try_ing_quant.py
 
+secrets
 #data files
 data/raw/twitter_training.csv
 data/raw/twitter_validation.csv
 twitter_sentiments_MLOPS/models/FCNN/
 # test cache
 manual_test/
-
+lightning_logs/
 # other local dev info
 .vscode/
 
