@@ -148,9 +148,9 @@ end of the project.
 >
 > Answer:
 
---- OBS> tjek kommando for docker
+---
 We used conda, pipreqs, docker, and git to manage our dependencies. The list of dependencies was auto-generated using pipregs where the dependencies exclusevly for development is in requirements_dev.txt and to run the project you would need the dependencies from requirements.txt. So to run the project you would need build the docker image and run that container:
-'docker build -f Docker.dockerfile . -t trainer:latest.'
+'docker build -f 'dockerfiles/predict_model.dockerfile' -t twitter-sentiment-app'
 
 As a new team member you would need to be added as collaborator in Github, clone the repository and run the following commands in their conda environment:
 'pip install -r requirements.txt', 'pip install -r requirements.txt' 'pip install -e .'
@@ -169,8 +169,7 @@ As a new team member you would need to be added as collaborator in Github, clone
 > *experiments.*
 > Answer:
 
---- OBS tjek om folderne er fjernet.. 
-
+---
 From the cookiecutter template we have filled out the data folder to store our data, both raw and processed, dockerfiles folder for the different docker files, models for the best performing models, test folder for our unit testing and outputs folders for ....(images of the results) and in the project folder we used the data folder for our data script, the models folder for the neural network, visualizations for visualizing script as well as all the training scripts for both the training and inference of our KNN model and our neural network.
 
 We removed the folder notebooks since we never used any notebooks. 
