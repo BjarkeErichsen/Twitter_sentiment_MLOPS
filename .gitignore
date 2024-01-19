@@ -2,6 +2,7 @@ docs/site/
 wandb/
 
 #ignorer png and jpg files
+*.png
 *.jpg
 
 twitter_sentiments_MLOPS\try_ing_quant.py

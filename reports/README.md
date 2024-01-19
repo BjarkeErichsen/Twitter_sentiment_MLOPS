@@ -296,8 +296,7 @@ We have not used any pre-commit hooks, although we have used Ruff for manually l
 
 --- We used WandB's sweep configuration function to sweep for the optimal hyper parameters. We defined ranges for the different hyperparamters, and then using both grid and random search these ranges would be used in different runs. From root directory we would call the function with the defined parameters sweep:
 'python twitter_sentiments_MLOPS/train_model_sweep_wandb.py'
-Then you would need to head over to the project's WandB project to examine the results more deeply or look in the terminal for a brief understanding of the results.
- ---
+Then you would need to head over to the project's WandB project to examine the results more deeply or look in the terminal for a brief understanding of the results. ---
 
 ### Question 13
 
